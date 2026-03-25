@@ -16,7 +16,7 @@
 #include "sfeDataLogger.h"
 #include "sfeDLCommands.h"
 #include "sfeDLLed.h"
-#include "sfeDLMode.h"
+// #include "sfeDLMode.h"
 #include "sfeDLSystemOp.h"
 #include "sfeDLVersion.h"
 
@@ -24,7 +24,7 @@
 
 // for our time setup
 #include <Flux/flxClock.h>
-#include <Flux/flxDevButton.h>
+
 #include <Flux/flxUtils.h>
 
 #include <time.h>
@@ -91,7 +91,7 @@ const uint32_t kStartupLoopDelayMS = 70;
 
 sfeDataLogger::sfeDataLogger()
     : _logTypeSer{kAppLogTypeNone}, _timer{kDefaultLogInterval}, _modeFlags{0}, _opFlags{0}, _bSleepEnabled{false},
-      _bLogSysInfo{false}, _pSystemInfo{nullptr} f
+      _bLogSysInfo{false}, _pSystemInfo{nullptr}
 {
 
     // Add a title for this section - the application level  - of settings
@@ -106,8 +106,8 @@ sfeDataLogger::sfeDataLogger()
     // user defined board name
     flxRegister(localBoardName, "Board Name", "A specific name for this DataLogger");
 
-    sdCardLogType.setTitle("Output");
-    flxRegister(sdCardLogType, "SD Card Format", "Enable and set the output format");
+    // sdCardLogType.setTitle("Output");
+    // flxRegister(sdCardLogType, "SD Card Format", "Enable and set the output format");
     flxRegister(serialLogType, "Serial Console Format", "Enable and set the output format");
     flxRegister(jsonBufferSize, "JSON Buffer Size", "Output buffer size in bytes");
 
@@ -309,7 +309,7 @@ bool sfeDataLogger::onSetup()
     // Have settings saved when editing via serial console is complete.
     flxRegisterEventCB(flxEvent::kOnEdit, this, &sfeDataLogger::onSettingsEdit);
     flxRegisterEventCB(flxEvent::kOnEditFinished, &flxSettings, &flxSettingsSave::saveEvent_CB);
-    flxRegisterEventCB(flxEvent::kOnNewFile, &flxSettings, &flxSettingsSave::saveEvent_CB);
+    // flxRegisterEventCB(flxEvent::kOnNewFile, &flxSettings, &flxSettingsSave::saveEvent_CB);
 
     // Add serial settings to flux - the flux loop call will take care
     // of everything else.
@@ -415,7 +415,7 @@ void sfeDataLogger::onRestore(void)
 {
     // At this point, we know enough about the device to set details about it.
     char prefix[5] = "0000";
-    (void)dlModeCheckPrefix(_modeFlags, prefix);
+    // (void)dlModeCheckPrefix(_modeFlags, prefix);
     setAppClassID(kDLAppClassNameID, prefix); // internal name string for this app type
 }
 

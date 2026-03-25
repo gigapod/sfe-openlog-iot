@@ -28,6 +28,7 @@ flux_sdk_add_module(
     flux_logging
     flux_prefs
     flux_prefs_serial
+    flux_file
     flux_system
     device_tmp117
     iot_http

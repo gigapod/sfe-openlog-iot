@@ -41,13 +41,13 @@ class sfeDLSystemOp : public flxOperation
         return millis();
     }
 
-    uint32_t get_sdfree(void)
-    {
-        if (!_pDataLogger || !_pDataLogger->_theSDCard.enabled())
-            return 0;
+    // uint32_t get_sdfree(void)
+    // {
+    //     if (!_pDataLogger || !_pDataLogger->_theSDCard.enabled())
+    //         return 0;
 
-        return _pDataLogger->_theSDCard.total() - _pDataLogger->_theSDCard.used();
-    }
+    //     return _pDataLogger->_theSDCard.total() - _pDataLogger->_theSDCard.used();
+    // }
 
     uint32_t get_heap(void)
     {
@@ -63,7 +63,7 @@ class sfeDLSystemOp : public flxOperation
         flxRegister(wifiRSSI, "RSSI", "Current WiFi RSSI");
         flxRegister(systemUptime, "Uptime", "System Uptime in MS");
         flxRegister(systemHeap, "Heap", "Heap free size");
-        flxRegister(systemSDFree, "SD Free", "SD Card free space");
+        // flxRegister(systemSDFree, "SD Free", "SD Card free space");
     }
 
     sfeDLSystemOp(sfeDataLogger *dlApp) : sfeDLSystemOp()
@@ -82,7 +82,7 @@ class sfeDLSystemOp : public flxOperation
 
     flxParameterOutUInt32<sfeDLSystemOp, &sfeDLSystemOp::get_uptime> systemUptime;
 
-    flxParameterOutUInt32<sfeDLSystemOp, &sfeDLSystemOp::get_sdfree> systemSDFree;
+    // flxParameterOutUInt32<sfeDLSystemOp, &sfeDLSystemOp::get_sdfree> systemSDFree;
 
     flxParameterOutUInt32<sfeDLSystemOp, &sfeDLSystemOp::get_heap> systemHeap;
 

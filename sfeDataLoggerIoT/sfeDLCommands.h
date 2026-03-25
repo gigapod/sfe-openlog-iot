@@ -134,28 +134,28 @@ class sfeDLCommands
     /// @param dlApp Pointer to the DataLogger App
     /// @retval bool indicates success (true) or failure (!true)
     ///
-    bool loadJSONSettings(sfeDataLogger *dlApp)
-    {
-        if (!dlApp)
-            return false;
+    // bool loadJSONSettings(sfeDataLogger *dlApp)
+    // {
+    //     if (!dlApp)
+    //         return false;
 
-        // Create a JSON prefs serial object and read in the settings
-        flxStorageJSONPrefSerial prefsSerial(flxSettings.fallbackBuffer() > 0 ? flxSettings.fallbackBuffer() : 2000);
+    //     // Create a JSON prefs serial object and read in the settings
+    //     flxStorageJSONPrefSerial prefsSerial(flxSettings.fallbackBuffer() > 0 ? flxSettings.fallbackBuffer() : 2000);
 
-        // restore the settings from serial
-        bool status = flxSettings.restoreObjectFromStorage(&flux, &prefsSerial);
-        if (!status)
-            return false;
+    //     // restore the settings from serial
+    //     bool status = flxSettings.restoreObjectFromStorage(&flux, &prefsSerial);
+    //     if (!status)
+    //         return false;
 
-        flxLog_I_(F("Settings restored from serial..."));
+    //     flxLog_I_(F("Settings restored from serial..."));
 
-        // now save the new settings in primary storage
-        status = flxSettings.save(&flux, true);
-        if (status)
-            flxLog_N(F("saved locally"));
+    //     // now save the new settings in primary storage
+    //     status = flxSettings.save(&flux, true);
+    //     if (status)
+    //         flxLog_N(F("saved locally"));
 
-        return status;
-    }
+    //     return status;
+    // }
     //---------------------------------------------------------------------
     ///
     /// @brief Saves the current system to preferences/Settings
@@ -295,31 +295,32 @@ class sfeDLCommands
     /// @param dlApp Pointer to the DataLogger App
     /// @retval bool indicates success (true) or failure (!true)
     ///
-    bool sdCardStats(sfeDataLogger *dlApp)
-    {
-        if (!dlApp)
-            return false;
+    // bool sdCardStats(sfeDataLogger *dlApp)
+    // {
+    //     if (!dlApp)
+    //         return false;
 
-        if (dlApp->_theSDCard.enabled())
-        {
+    //     if (dlApp->_theSDCard.enabled())
+    //     {
 
-            char szSize[32];
-            char szCap[32];
-            char szAvail[32];
+    //         char szSize[32];
+    //         char szCap[32];
+    //         char szAvail[32];
 
-            flx_utils::formatByteString(dlApp->_theSDCard.size(), 2, szSize, sizeof(szSize));
-            flx_utils::formatByteString(dlApp->_theSDCard.total(), 2, szCap, sizeof(szCap));
-            flx_utils::formatByteString(dlApp->_theSDCard.total() - dlApp->_theSDCard.used(), 2, szAvail,
-                                        sizeof(szAvail));
+    //         flx_utils::formatByteString(dlApp->_theSDCard.size(), 2, szSize, sizeof(szSize));
+    //         flx_utils::formatByteString(dlApp->_theSDCard.total(), 2, szCap, sizeof(szCap));
+    //         flx_utils::formatByteString(dlApp->_theSDCard.total() - dlApp->_theSDCard.used(), 2, szAvail,
+    //                                     sizeof(szAvail));
 
-            flxLog_I(F("SD Card - Type: %s Size: %s Capacity: %s Free: %s (%.1f%%)"), dlApp->_theSDCard.type(), szSize,
-                     szCap, szAvail, 100. - (dlApp->_theSDCard.used() / (float)dlApp->_theSDCard.total() * 100.));
-        }
-        else
-            flxLog_I(F("SD card not available"));
+    //         flxLog_I(F("SD Card - Type: %s Size: %s Capacity: %s Free: %s (%.1f%%)"), dlApp->_theSDCard.type(),
+    //         szSize,
+    //                  szCap, szAvail, 100. - (dlApp->_theSDCard.used() / (float)dlApp->_theSDCard.total() * 100.));
+    //     }
+    //     else
+    //         flxLog_I(F("SD card not available"));
 
-        return true;
-    }
+    //     return true;
+    // }
 
     //---------------------------------------------------------------------
     ///
@@ -468,12 +469,12 @@ class sfeDLCommands
         {"clear-settings-forced", &sfeDLCommands::clearDeviceSettingsForced},
         {"restart", &sfeDLCommands::restartDevice},
         {"restart-forced", &sfeDLCommands::restartDeviceForced},
-        {"json-settings", &sfeDLCommands::loadJSONSettings},
+        // {"json-settings", &sfeDLCommands::loadJSONSettings},
         {"log-rate", &sfeDLCommands::logRateStats},
         {"log-rate-toggle", &sfeDLCommands::logRateToggle},
         {"log-now", &sfeDLCommands::logObservationNow},
         {"wifi", &sfeDLCommands::wifiStats},
-        {"sdcard", &sfeDLCommands::sdCardStats},
+        // {"sdcard", &sfeDLCommands::sdCardStats},
         {"devices", &sfeDLCommands::listLoadedDevices},
         {"save-settings", &sfeDLCommands::saveSettings},
         {"heap", &sfeDLCommands::heapStatus},

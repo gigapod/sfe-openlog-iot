@@ -28,14 +28,11 @@
 #include <Flux/flxPreferences.h>
 #include <Flux/flxSettings.h>
 #include <Flux/flxSettingsSerial.h>
-#include <Flux/flxStorageJSONPref.h>
+// #include <Flux/flxStorageJSONPref.h>
 
 // WiFi and NTP
 #include <Flux/flxNTPESP32.h>
 #include <Flux/flxWiFiESP32.h>
-
-// NFC device
-#include <Flux/flxDevST25DV.h>
 
 // IoT Client Includes
 // #include <Flux/flxIoTAWS.h>
@@ -372,8 +369,8 @@ class sfeDataLogger : public flxApplication
     // - The name  and description of the device.
     // - Available pins
     // - The pin names for the analog pins.
-    flxOptEnableDevice<flxDevAnalogPin> _analogPinEnable = {
-        "Analog Pin Sensor", "Read analog values from a pin", {{"A0", 36}, {"A3", 39}, {"A7", 35}}};
+    // flxOptEnableDevice<flxDevAnalogPin> _analogPinEnable = {
+    //     "Analog Pin Sensor", "Read analog values from a pin", {{"A0", 36}, {"A3", 39}, {"A7", 35}}};
 
     // Container for IoT endpoint drivers
     flxActionContainer _iotEndpoints;

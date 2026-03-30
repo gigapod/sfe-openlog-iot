@@ -22,8 +22,10 @@
 
 #include "esp_sleep.h"
 
+#if defined(CONFIG_FLUX_CLOCK)
 // for our time setup
 #include <Flux/flxClock.h>
+#endif
 
 #include <Flux/flxUtils.h>
 
@@ -63,21 +65,6 @@ static const uint8_t _app_jump[] = {104, 72, 67, 51,  74,  67,  108, 99, 104, 11
 
 // Startup/Timeout for serial connection to init...
 #define kSerialStartupDelayMS 5000
-
-//---------------------------------------------------------
-// Valid platform check interface
-
-#ifdef DATALOGGER_IOT_NAG_TIME
-#define kLNagTimeMins DATALOGGER_IOT_NAG_TIME
-#else
-#define kLNagTimeMins 30
-#endif
-
-#define kLNagTimeSecs (kLNagTimeMins * 60)
-#define kLNagTimesMSecs (kLNagTimeSecs * 1000)
-
-static const char *kLNagMessage =
-    "This firmware is designed to run on a SparkFun DataLogger IoT board. Purchase one at www.sparkfun.com";
 
 constexpr char *sfeDataLogger::kLogFormatNames[];
 
@@ -142,11 +129,13 @@ sfeDataLogger::sfeDataLogger()
     logSysInfo.setName("System Info", "Log system information");
     logSysInfo(this, true); // set owner object - skip the add to prop list for this object
 
+#if defined(CONFIG_FLUX_LOGGING)
     // add this prop to our logger
     _logger.addProperty(logSysInfo);
 
     // Update timer object string
     _timer.setName("Logging Timer", "Set the interval between log entries");
+#endif
 
     // set sleep default interval && event handler method
     sleepInterval = kSystemSleepSleepSec;
@@ -156,7 +145,9 @@ sfeDataLogger::sfeDataLogger()
     flux.setAppToken(_app_jump, sizeof(_app_jump));
 
     // do not want the wifi connect() call made until after initialize
+#if defined(CONFIG_FLUX_WIFI)
     _wifiConnection.setDelayedStartup(true);
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -184,6 +175,7 @@ void sfeDataLogger::onErrorMessage(uint8_t msgType)
         sfeLED.flash(sfeLED.Yellow);
 }
 
+#if defined(CONFIG_FLUX_PREFS_SERIAL)
 //---------------------------------------------------------------------------
 // Display things during settings edits
 //---------------------------------------------------------------------------
@@ -214,7 +206,7 @@ void sfeDataLogger::onSettingsEdit(bool bLoading)
         }
     }
 }
-
+#endif
 //---------------------------------------------------------------------------
 void sfeDataLogger::onSystemActivity(void)
 {
@@ -298,33 +290,51 @@ bool sfeDataLogger::onSetup()
     // Version info
     setVersion(kDLVersionNumberMajor, kDLVersionNumberMinor, kDLVersionNumberPoint, kDLVersionDescriptor, BUILD_NUMBER);
 
+#if defined(CONFIG_FLUX_PREFS)
     // set the settings storage system for the framework
     flxSettings.setStorage(&_sysStorage);
-    // flxSettings.setFallback(&_jsonStorage);
 
+#if defined(CONFIG_FLUX_PREFS_JSON)
+    flxSettings.setFallback(&_jsonStorage);
+#endif
+#endif
+
+// TODO -- this should take into account the various FS storage options in the frameowrk
+#if defined(CONFIG_FLUX_SDMMCARD) && defined(CONFIG_FLUX_PREFS_JSON)
     // Have JSON storage write/use the SD card
-    // _jsonStorage.setFileSystem(&_theSDCard);
-    // _jsonStorage.setFilename("datalogger.json");
+    _jsonStorage.setFileSystem(&_theSDCard);
+    _jsonStorage.setFilename("datalogger.json");
+#endif
 
+#if defined(CONFIG_FLUX_PREFS_SERIAL)
     // Have settings saved when editing via serial console is complete.
     flxRegisterEventCB(flxEvent::kOnEdit, this, &sfeDataLogger::onSettingsEdit);
     flxRegisterEventCB(flxEvent::kOnEditFinished, &flxSettings, &flxSettingsSave::saveEvent_CB);
+
     // flxRegisterEventCB(flxEvent::kOnNewFile, &flxSettings, &flxSettingsSave::saveEvent_CB);
 
     // Add serial settings to flux - the flux loop call will take care
     // of everything else.
     flux.add(_serialSettings);
+#endif
 
+#if defined(CONFIG_FLUX_WIFI)
     _wifiConnection.setTitle("Network");
+#endif
 
+#if defined(CONFIG_FLUX_NTP)
     // wire up the NTP to the wifi network object. When the connection status changes,
     // the NTP client will start and stop.
+#if defined(CONFIG_FLUX_WIFI)
     _ntpClient.setNetwork(&_wifiConnection);
+#endif
     _ntpClient.setStartupDelay(kAppNTPStartupDelaySecs); // Give the NTP server some time to start
 
     // set our default clock to NTP - this will be overwritten if prefs are loaded
+#if defined(CONFIG_FLUX_CLOCK)
     flxClock.referenceClock = _ntpClient.name();
-
+#endif
+#endif
     // Setup the IoT clients
     // if (!setupIoTClients())
     //     flxLog_W(F("Error initializing IoT Clients"));
@@ -332,16 +342,22 @@ bool sfeDataLogger::onSetup()
     //----------
     // setup firmware update/reset system
 
+#if defined(CONFIG_FLUX_FIRMWARE)
+#if defined(CONFIG_FLUX_SDMMCARD)
     // Filesystem to read firmware from
-    // _sysUpdate.setFileSystem(&_theSDCard);
+    _sysUpdate.setFileSystem(&_theSDCard);
+#endif
 
+#if defined(CONFIG_FLUX_PREFS_SERIAL)
     // Serial UX - used to list files to select off the filesystem
     _sysUpdate.setSerialSettings(_serialSettings);
-
+#endif
     _sysUpdate.setFirmwareFilePrefix(kDataLoggerFirmwareFilePrefix);
 
+#if defined(CONFIG_FLUX_WIFI)
     _sysUpdate.setWiFiDevice(&_wifiConnection);
     _sysUpdate.enableOTAUpdates(kDataLoggerOTAManifestURL);
+#endif
 
     flxRegisterEventCB(flxEvent::kOnFirmwareLoad, this, &sfeDataLogger::onFirmwareLoad);
 
@@ -349,6 +365,7 @@ bool sfeDataLogger::onSetup()
     _sysUpdate.setTitle("Advanced");
     flux.add(_sysUpdate);
 
+#endif
     // The on-board button
     flux.add(_boardButton);
 
@@ -370,10 +387,11 @@ bool sfeDataLogger::onSetup()
     if (inOpMode(kDataLoggerOpStartNoSettings))
         flux.setLoadSettings(false);
 
+#if defined(CONFIG_FLUX_WIFI)
     // was wifi startup disabled by startup commands?
     if (inOpMode(kDataLoggerOpStartNoWiFi))
         _wifiConnection.setDelayedStartup();
-
+#endif
     // was wifi startup disabled by startup commands?
     if (inOpMode(kDataLoggerOpStartListDevices))
         flux.dumpDeviceAutoLoadTable();
@@ -423,8 +441,13 @@ void sfeDataLogger::onRestore(void)
 // reset the device - erase settings, reboot
 void sfeDataLogger::resetDevice(void)
 {
+#if defined(CONFIG_FLUX_PREFS)
     _sysStorage.resetStorage();
+#endif
+
+#if defined(CONFIG_FLUX_FIRMWARE)
     _sysUpdate.restartDevice();
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -461,8 +484,12 @@ void sfeDataLogger::onInitStartupCommands(uint delaySecs)
         {'v', kAppOpStartVerboseOutput, "verbose-output-enabled"},
         {'a', kDataLoggerOpStartNoAutoload, "device-auto-load-disabled"},
         {'l', kDataLoggerOpStartListDevices, "i2c-driver-listing-enabled"},
+#if defined(CONFIG_FLUX_WIFI)
         {'w', kDataLoggerOpStartNoWiFi, "wifi-disabled"},
+#endif
+#if defined(CONFIG_FLUX_PREFS)
         {'s', kDataLoggerOpStartNoSettings, "settings-restore-disabled"},
+#endif
     };
 
     // Default
@@ -554,46 +581,10 @@ void sfeDataLogger::onInit(void)
     startupDelaySecs = theDelay;
     onInitStartupCommands(theDelay);
 
-    // // change the order of the system settings
-    // flux.insert_after(&flxSettings, &flxClock);
-
-    // // set interrupt event after the output file
-    // flux.insert_after(&_extIntrEvent, &_theOutputFile);
-
-    // // GPIO devices in the menu
-    // _extSerial.setTitle("GPIO Devices");
-    // flux.insert_after(&_extSerial, &_extIntrEvent);
-    // flux.insert_after(&_soilMoistureEnable, &_extSerial);
-    // flux.insert_after(&_analogPinEnable, &_soilMoistureEnable);
-
-    // flux.insert_after(&_iotEndpoints, &_analogPinEnable);
-}
-//---------------------------------------------------------------------------
-// Check our platform status
-void sfeDataLogger::checkOpMode()
-{
-    // _isValidMode = dlModeCheckValid(_modeFlags);
-    _isValidMode = true;
-    // DO we need to nag? If so, add nag job to the loop
-    // if (!_isValidMode)
-    // {
-    //     _isValidMode = true;
-    //     setName("Unknown Board");
-
-    //     // 2026 - don't care  about this any more ..
-    //     // Create a timed job that will trigger a nag message at a regular interval
-    //     // flxJob *pJob = new flxJob;
-    //     // if (pJob != nullptr)
-    //     // {
-    //     //     pJob->setup("!SparkFun", kLNagTimesMSecs, this, &sfeDataLogger::outputVMessage);
-    //     //     flxAddJobToQueue(*pJob);
-    //     // }
-    //     // else
-    //     //     flxLog_W(kLNagMessage);
-    // }
-    // else
-    //     // at this point we know the board we're running on. Set the name...
-    //     setName(dlModeCheckName(_modeFlags));
+    // #if defined(CONFIG_FLUX_CLOCK)
+    //     // change the order of the system settings
+    //     flux.insert_after(&flxSettings, &flxClock);
+    // #endif
 }
 
 //---------------------------------------------------------------------------
@@ -712,8 +703,6 @@ bool sfeDataLogger::onStart()
     // set our system start time in milliseconds
     _startTime = millis();
 
-    checkOpMode();
-
     if (startupOutputMode() == kAppStartupMsgNormal)
         displayAppStatus(true);
 
@@ -775,16 +764,7 @@ void sfeDataLogger::enterSleepMode()
 
     esp_deep_sleep_start(); // see you on the other side
 }
-//---------------------------------------------------------------------------
-void sfeDataLogger::outputVMessage()
-{
-    // _logger.logMessage("INVALID PLATFORM", (char *)kLNagMessage);
 
-    // // if not logging to the serial console, dump out a message
-
-    // if (_logTypeSer == kAppLogTypeNone)
-    //     flxLog_W(kLNagMessage);
-}
 // simple helper to get the build time of the firmware
 const char *sfeDataLogger::getBuildDate(void)
 {
@@ -804,8 +784,10 @@ void sfeDataLogger::onDeviceAdded(uint32_t uiDevice)
     if (pDevice == nullptr)
         return;
 
+#if defined(CONFIG_FLUX_LOGGING)
     // add this device to the logger
     _logger.add(pDevice);
+#endif
 }
 void sfeDataLogger::onDeviceRemoved(uint32_t uiDevice)
 {
@@ -817,8 +799,10 @@ void sfeDataLogger::onDeviceRemoved(uint32_t uiDevice)
     if (pDevice == nullptr)
         return;
 
+#if defined(CONFIG_FLUX_LOGGING)
     // remove this device from the logger
     _logger.remove(pDevice);
+#endif
 }
 //---------------------------------------------------------------------------
 // loop()

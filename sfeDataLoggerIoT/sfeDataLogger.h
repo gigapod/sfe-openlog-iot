@@ -14,56 +14,99 @@
  */
 #pragma once
 
-// Spark framework
+// Core Items
 #include <Flux.h>
 #include <Flux/flxCoreJobs.h>
 #include <Flux/flxCoreLog.h>
-#include <Flux/flxFmtCSV.h>
-#include <Flux/flxFmtJSON.h>
-#include <Flux/flxLogger.h>
 #include <Flux/flxSerial.h>
 #include <Flux/flxTimer.h>
 
-// settings storage
+// Logging Module
+#if defined(CONFIG_FLUX_LOGGING)
+#include <Flux/flxFmtCSV.h>
+#include <Flux/flxFmtJSON.h>
+#include <Flux/flxLogger.h>
+#endif
+
+// Prefs Module
+#if defined(CONFIG_FLUX_PREFS)
 #include <Flux/flxPreferences.h>
 #include <Flux/flxSettings.h>
-#include <Flux/flxSettingsSerial.h>
-// #include <Flux/flxStorageJSONPref.h>
+#endif
 
-// WiFi and NTP
+// Serial Settings editor module
+#if defined(CONFIG_FLUX_PREFS_SERIAL)
+#include <Flux/flxSettingsSerial.h>
+#endif
+
+// JSON backed prefs module
+#if defined(CONFIG_FLUX_PREFS_JSON)
+#include <Flux/flxStorageJSONPref.h>
+#endif
+
+// NTP Module?
+#if defined(CONFIG_FLUX_NTP)
+// TODO - work on platform abstraction
+#ifdef ESP32
 #include <Flux/flxNTPESP32.h>
+#endif
+#endif
+
+#if defined(CONFIG_FLUX_WIFI)
+// TODO - work on platform abstraction
+#ifdef ESP32
 #include <Flux/flxWiFiESP32.h>
+#endif
+#endif
 
 // IoT Client Includes
-// #include <Flux/flxIoTAWS.h>
-// #include <Flux/flxIoTArduino.h>
-// #include <Flux/flxIoTAzure.h>
+#if defined(CONFIG_IOT_AWS)
+#include <Flux/flxIoTAWS.h>
+#endif
+
+#if defined(CONFIG_IOT_ARDUINO)
+#include <Flux/flxIoTArduino.h>
+#endif
+
+#if defined(CONFIG_IOT_AZURE)
+#include <Flux/flxIoTAzure.h>
+#endif
+
+#if defined(CONFIG_IOT_HTTP)
 #include <Flux/flxIoTHTTP.h>
-// #include <Flux/flxIoTMachineChat.h>
-// #include <Flux/flxIoTThingSpeak.h>
+#endif
+
+#if defined(CONFIG_IOT_MACHINECHAT)
+#include <Flux/flxIoTMachineChat.h>
+#endif
+
+#if defined(CONFIG_IOT_THINGSPEAK)
+#include <Flux/flxIoTThingSpeak.h>
+#endif
+
+#if defined(CONFIG_IOT_MQTT)
+// TODO - work in platform abstraction
+#ifdef ESP32
 #include <Flux/flxMQTTESP32.h>
+#endif
+#endif
 
 // External Serial Device connection and use
+#if defined(CONFIG_OPT_EXTSERIAL)
 #include <Flux/flxOptExtSerial.h>
+#endif
 
 // Interrupt event to drive logging
+#if defined(CONFIG_OPT_EXTINTERRUPT)
 #include <Flux/flxOptInterruptEvent.h>
-
-// Soil moisture sensor enable
-// #include <Flux/flxDevSoilMoisture.h>
-// #include <Flux/flxOptEnableDevice.h>
-
-// analog pin
-// #include <Flux/flxDevAnalogPin.h>
+#endif
 
 // System Firmware update/reset
+#if defined(CONFIG_FLUX_FIRMWARE)
 #include <Flux/flxSysFirmware.h>
+#endif
 
 #include "sfeDLButton.h"
-
-// #ifdef ENABLE_OLED_DISPLAY
-// #include "sfeDLDisplay.h"
-// #endif
 
 #include <utility>
 
@@ -299,17 +342,18 @@ class sfeDataLogger : public flxApplication
 
   private:
     void enterSleepMode(void);
-    void outputVMessage(void);
-    void checkOpMode(void);
 
     void _displayAboutObjHelper(char, const char *, bool);
     void displayAppAbout(void);
     void displayAppStatus(bool useInfo = false);
 
     // event things
+#if defined(CONFIG_FLUX_FIRMWARE)
     void onFirmwareLoad(bool bLoading);
+#endif
+#if defined(CONFIG_FLUX_PREFS_SERIAL)
     void onSettingsEdit(bool bLoading);
-
+#endif
     void onSystemActivity(void);
     void onSystemActivityLow(void);
 
@@ -330,75 +374,100 @@ class sfeDataLogger : public flxApplication
     // Class members -- that make up the application structure
 
     // WiFi and NTP
+#if defined(CONFIG_FLUX_WIFI)
     flxWiFiESP32 _wifiConnection;
+#endif
+
+#if defined(CONFIG_FLUX_NTP)
     flxNTPESP32 _ntpClient;
+#endif
 
     // Create a JSON and CSV output formatters.
     // Note: setting internal buffer sizes using template to minimize alloc calls.
+#if defined(CONFIG_FLUX_LOGGING)
     flxFormatJSON<kAppJSONDocSize> _fmtJSON;
     flxFormatCSV _fmtCSV;
 
     // Our logger
     flxLogger _logger;
 
+#endif
+
     // Timer for event logging
     flxTimer _timer;
 
+#if defined(CONFIG_FLUX_SDMMCARD)
+    // SD Card Filesystem object
+    flxFSSDMMCard _theSDCard;
+#endif
+
+#if defined(CONFIG_FLUX_PREFS)
     // settings things
     flxPreferences _sysStorage;
-    flxSettingsSerial _serialSettings;
-    // flxStorageJSONPrefFile _jsonStorage;
+#endif
 
+#if defined(CONFIG_FLUX_PREFS_SERIAL)
+    flxSettingsSerial _serialSettings;
+#endif
+
+#if defined(CONFIG_FLUX_PREFS_JSON)
+    flxStorageJSONPrefFile _jsonStorage;
+#endif
+
+#if defined(CONFIG_OPT_EXTSERIAL)
     // the external serial connection manager
     flxOptExtSerial _extSerial;
+#endif
 
+#if defined(CONFIG_OPT_EXTINTERRUPT)
     // interrupt event to drive logging
     flxOptInterruptEvent _extIntrEvent;
+#endif
 
-    // Soil moisture sensor Enable manager. We use the flxOptEnableDevice template to manage the device
-    // This allows us to enable/disable the device and manage its lifecycle.
-    // We pass in an initialiser list that contains:
-    // - The name  and description of the device.
-    //  - The default pins for the soil sensor - VCC and Sensor pin.
-    // flxOptEnableDevice<flxDevSoilMoisture> _soilMoistureEnable = {
-    //     "Soil Moisture Sensor", "Enable GPIO attached Soil Moisture Sensor", (uint8_t)33, (uint8_t)2};
-
-    // Analog pin device
-    // This allows us to enable/disable the device and manage its lifecycle.
-    // We pass in an initialiser list that contains:
-    // - The name  and description of the device.
-    // - Available pins
-    // - The pin names for the analog pins.
-    // flxOptEnableDevice<flxDevAnalogPin> _analogPinEnable = {
-    //     "Analog Pin Sensor", "Read analog values from a pin", {{"A0", 36}, {"A3", 39}, {"A7", 35}}};
-
+#if defined(CONFIG_IOT_MQTT) || defined(CONFIG_IOT_ARDUINO) || defined(CONFIG_IOT_AWS) ||                              \
+    defined(CONFIG_IOT_THINGSPEAK) || defined(CONFIG_IOT_AZURE) || defined(CONFIG_IOT_HTTP) ||                         \
+    defined(CONFIG_IOT_MACHINECHAT)
     // Container for IoT endpoint drivers
     flxActionContainer _iotEndpoints;
+#endif
     // IoT endpoints
+
+#if defined(CONFIG_IOT_MQTT)
     // An generic MQTT client
     flxMQTTESP32 _mqttClient;
 
     // secure mqtt
     flxMQTTESP32Secure _mqttSecureClient;
+#endif
 
     // AWS
-    // flxIoTAWS _iotAWS;
+#if defined(CONFIG_IOT_AWS)
+    flxIoTAWS _iotAWS;
+#endif
 
+#if defined(CONFIG_IOT_THINGSPEAK)
     // Thingspeak
-    // flxIoTThingSpeak _iotThingSpeak;
+    flxIoTThingSpeak _iotThingSpeak;
+#endif
 
+#if defined(CONFIG_IOT_AZURE)
     // azure
-    // flxIoTAzure _iotAzure;
+    flxIoTAzure _iotAzure;
+#endif
 
+#if defined(CONFIG_IOT_HTTP)
     // HTTP/URL Post
     flxIoTHTTP _iotHTTP;
+#endif
 
     // KDB Testing
     // Web Server
     // sfeDLWebServer _iotWebServer;
 
+#if defined(CONFIG_FLUX_FIRMWARE)
     // Our firmware Update/Reset system
     flxSysFirmware _sysUpdate;
+#endif
 
     // for our button events of the board
     sfeDLButton _boardButton;

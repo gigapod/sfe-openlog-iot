@@ -196,17 +196,6 @@ class sfeDataLogger : public flxApplication
     friend class sfeDLCommands;
     friend class sfeDLSystemOp;
 
-    //---------------------------------------------------------------------
-    // Check if we have a NFC reader available -- for use with WiFi credentials
-    //
-
-    //---------------------------------------------------------------------------
-    // serial input device setup and event methods ...
-    // void extSerialDataEventCB(void);
-    void setupExtSerial(void);
-
-    void setInterruptEvent(void);
-
     //------------------------------------------
     // For controlling the log output types
 

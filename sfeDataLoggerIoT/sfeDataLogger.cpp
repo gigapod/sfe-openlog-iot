@@ -414,15 +414,15 @@ bool sfeDataLogger::onSetup()
 void sfeDataLogger::onDeviceLoad()
 {
 
-    // setup the GNSS device - will create some properties that should be visible
-    // after the device is loaded and before restore (if the settings are saved)
-    // setupGNSS();
+    // // setup the GNSS device - will create some properties that should be visible
+    // // after the device is loaded and before restore (if the settings are saved)
+    // // setupGNSS();
 
-    // setup the external serial device manager
-    setupExtSerial();
+    // // setup the external serial device manager
+    // setupExtSerial();
 
-    // setup interrupt event
-    setInterruptEvent();
+    // // setup interrupt event
+    // setInterruptEvent();
 }
 //---------------------------------------------------------------------
 // onRestore()

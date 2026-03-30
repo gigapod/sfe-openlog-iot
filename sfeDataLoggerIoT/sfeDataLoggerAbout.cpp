@@ -62,8 +62,9 @@ void sfeDataLogger::displayAppStatus(bool useInfo)
     memset(szBuffer, '\0', sizeof(szBuffer));
     strftime(szBuffer, sizeof(szBuffer), "%G-%m-%dT%T", tmLocal);
     flxLog__(logLevel, "%cTime: %s", pre_ch, szBuffer);
+#if defined(CONFIG_FLUX_CLOCK)
     flxLog__(logLevel, "%cTime Zone: %s", pre_ch, flxClock.timeZone().c_str());
-
+#endif
     // uptime
     uint32_t days, hours, minutes, secs, mills;
 
@@ -96,6 +97,7 @@ void sfeDataLogger::displayAppStatus(bool useInfo)
     flxLog__(logLevel, "%cSystem Heap - Total: %dB Free: %dB (%.1f%%)", pre_ch, ESP.getHeapSize(), ESP.getFreeHeap(),
              (float)ESP.getFreeHeap() / (float)ESP.getHeapSize() * 100.);
 
+#if defined(CONFIG_FLUX_WIFI)
     if (_wifiConnection.enabled())
     {
         if (_wifiConnection.isConnected())
@@ -115,11 +117,13 @@ void sfeDataLogger::displayAppStatus(bool useInfo)
     }
     else
         flxLog__(logLevel, "%cWiFi not enabled", pre_ch);
+#endif
 
     flxLog__(logLevel, "%cSystem Deep Sleep: %s", pre_ch, sleepEnabled() ? "enabled" : "disabled");
     flxLog_N("%c    Sleep Interval: %d seconds", pre_ch, sleepInterval());
     flxLog_N("%c    Wake Interval: %d seconds", pre_ch, wakeInterval());
 
+#if defined(CONFIG_FLUX_LOGGING)
     flxLog_N("");
     if (!useInfo)
     {
@@ -138,6 +142,7 @@ void sfeDataLogger::displayAppStatus(bool useInfo)
 
     flxLog__(logLevel, "%cJSON Buffer - Size: %dB Max Used: %dB", pre_ch, jsonBufferSize(), _fmtJSON.getMaxSizeUsed());
     flxLog__(logLevel, "%cSerial Output: %s", pre_ch, kLogFormatNames[serialLogType()]);
+#endif
     flxLog_N("%c    Baud Rate: %d", pre_ch, serialBaudRate());
 
     // // at startup, useInfo == true, the file isn't known, so skip output
@@ -147,29 +152,9 @@ void sfeDataLogger::displayAppStatus(bool useInfo)
     //              _theOutputFile.currentFilename().c_str());
     // flxLog_N("%c    Rotate Period: %d Hours", pre_ch, _theOutputFile.rotatePeriod());
 
-    bool bEnabled = _extIntrEvent.isEnabled();
-    flxLog__(logLevel, "%cInterrupt Log Trigger: %s", pre_ch, bEnabled ? "Enabled" : "Disabled");
-    if (bEnabled)
-    {
-        flxLog__(logLevel, "%c    Pin: %d", pre_ch, _extIntrEvent.intrPin());
-        flxLog__(logLevel, "%c    Event: %s", pre_ch, _extIntrEvent.eventName().c_str());
-    }
-    flxLog_N("");
-    if (!useInfo)
-    {
-        flxSerial.textToWhite();
-        flxLog_N("    GPIO:");
-        flxSerial.textToNormal();
-    }
-    bEnabled = _extSerial.serialDeviceEnabled();
-    flxLog__(logLevel, "%cSerial Device Logging: %s", pre_ch, bEnabled ? "Enabled" : "Disabled");
-    if (bEnabled)
-    {
-        flxLog__(logLevel, "%c    RX Pin: %d", pre_ch, _extSerial.rxPin());
-        flxLog__(logLevel, "%c    TX Pin: %d", pre_ch, _extSerial.txPin());
-        flxLog__(logLevel, "%c    Baud Rate: %d", pre_ch, _extSerial.serialBaudRate());
-    }
-
+#if defined(CONFIG_IOT_MQTT) || defined(CONFIG_IOT_ARDUINO) || defined(CONFIG_IOT_AWS) ||                              \
+    defined(CONFIG_IOT_THINGSPEAK) || defined(CONFIG_IOT_AZURE) || defined(CONFIG_IOT_HTTP) ||                         \
+    defined(CONFIG_IOT_MACHINECHAT)
     flxLog_N("");
     if (!useInfo)
     {
@@ -180,13 +165,24 @@ void sfeDataLogger::displayAppStatus(bool useInfo)
     else
         flxLog__(logLevel, "%cIoT Services:", pre_ch);
 
+#if defined(CONFIG_IOT_MQTT)
     _displayAboutObjHelper(pre_ch, _mqttClient.name(), _mqttClient.enabled());
     _displayAboutObjHelper(pre_ch, _mqttSecureClient.name(), _mqttSecureClient.enabled());
+#endif
+#if defined(CONFIG_IOT_HTTP)
     _displayAboutObjHelper(pre_ch, _iotHTTP.name(), _iotHTTP.enabled());
-    // _displayAboutObjHelper(pre_ch, _iotAWS.name(), _iotAWS.enabled());
-    // _displayAboutObjHelper(pre_ch, _iotAzure.name(), _iotAzure.enabled());
-    // _displayAboutObjHelper(pre_ch, _iotThingSpeak.name(), _iotThingSpeak.enabled());
+#endif
+#if defined(CONFIG_IOT_AWS)
+    _displayAboutObjHelper(pre_ch, _iotAWS.name(), _iotAWS.enabled());
+#endif
+#if defined(CONFIG_IOT_AZURE)
+    _displayAboutObjHelper(pre_ch, _iotAzure.name(), _iotAzure.enabled());
+#endif
+#if defined(CONFIG_IOT_THINGSPEAK)
+    _displayAboutObjHelper(pre_ch, _iotThingSpeak.name(), _iotThingSpeak.enabled());
+#endif
 
+#endif
     // flxLog_N("");
     // if (!useInfo)
     // {

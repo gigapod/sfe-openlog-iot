@@ -13,14 +13,14 @@
  * SparkFun Data Logger - setup methods
  *
  */
+#include "flxAppFDNLogger.h"
 #include "sfeDLBoard.h"
-#include "sfeDataLogger.h"
 
 #include <Flux/flxDevSerial.h>
 
 //---------------------------------------------------------------------
 // Setup the IOT clients
-bool sfeDataLogger::setupIoTClients()
+bool flxAppFDNLogger::setupIoTClients()
 {
 #if defined(CONFIG_IOT_MQTT) || defined(CONFIG_IOT_ARDUINO) || defined(CONFIG_IOT_AWS) ||                              \
     defined(CONFIG_IOT_THINGSPEAK) || defined(CONFIG_IOT_AZURE) || defined(CONFIG_IOT_HTTP) ||                         \
@@ -111,7 +111,7 @@ bool sfeDataLogger::setupIoTClients()
 //
 // Setup any time sources/sinks. Called after devices are loaded
 
-bool sfeDataLogger::setupTime()
+bool flxAppFDNLogger::setupTime()
 {
 
 #if defined(CONFIG_FLUX_CLOCK)

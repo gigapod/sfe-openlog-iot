@@ -13,22 +13,22 @@
  *
  */
 
+#include "flxAppFDNLogger.h"
 #include "sfeDLLed.h"
 #include "sfeDLSystemOp.h"
 #include "sfeDLVersion.h"
-#include "sfeDataLogger.h"
 #include <Flux/flxSerial.h>
 
 //---------------------------------------------------------------------------
 // Property Callback methods for the application
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
-uint8_t sfeDataLogger::get_logTypeSer(void)
+uint8_t flxAppFDNLogger::get_logTypeSer(void)
 {
     return _logTypeSer;
 }
 //---------------------------------------------------------------------------
-void sfeDataLogger::set_logTypeSer(uint8_t logType)
+void flxAppFDNLogger::set_logTypeSer(uint8_t logType)
 {
     if (logType == _logTypeSer)
         return;
@@ -49,12 +49,12 @@ void sfeDataLogger::set_logTypeSer(uint8_t logType)
 //---------------------------------------------------------------------------
 // json Buffer Size
 
-uint32_t sfeDataLogger::get_jsonBufferSize(void)
+uint32_t flxAppFDNLogger::get_jsonBufferSize(void)
 {
     return _fmtJSON.bufferSize();
 }
 
-void sfeDataLogger::set_jsonBufferSize(uint32_t new_size)
+void flxAppFDNLogger::set_jsonBufferSize(uint32_t new_size)
 {
     _fmtJSON.setBufferSize(new_size);
 }
@@ -62,12 +62,12 @@ void sfeDataLogger::set_jsonBufferSize(uint32_t new_size)
 //---------------------------------------------------------------------------
 // device names
 //---------------------------------------------------------------------------
-bool sfeDataLogger::get_verbose_dev_name(void)
+bool flxAppFDNLogger::get_verbose_dev_name(void)
 {
     return flux.verboseDevNames();
 }
 
-void sfeDataLogger::set_verbose_dev_name(bool enable)
+void flxAppFDNLogger::set_verbose_dev_name(bool enable)
 {
     flux.setVerboseDevNames(enable);
 }
@@ -75,13 +75,13 @@ void sfeDataLogger::set_verbose_dev_name(bool enable)
 //---------------------------------------------------------------------------
 // Sleep
 //---------------------------------------------------------------------------
-bool sfeDataLogger::get_sleepEnabled(void)
+bool flxAppFDNLogger::get_sleepEnabled(void)
 {
     return _bSleepEnabled;
 }
 
 //---------------------------------------------------------------------------
-void sfeDataLogger::set_sleepEnabled(bool enabled)
+void flxAppFDNLogger::set_sleepEnabled(bool enabled)
 {
     if (_bSleepEnabled == enabled)
         return;
@@ -96,13 +96,13 @@ void sfeDataLogger::set_sleepEnabled(bool enabled)
 
 //---------------------------------------------------------------------------
 // Wake interval - get/set in secs; stored in our sleep event as MSecs
-uint32_t sfeDataLogger::get_sleepWakePeriod(void)
+uint32_t flxAppFDNLogger::get_sleepWakePeriod(void)
 {
     return _sleepJob.period() / 1000;
 }
 //---------------------------------------------------------------------------
 // set period -- in secs
-void sfeDataLogger::set_sleepWakePeriod(uint32_t period)
+void flxAppFDNLogger::set_sleepWakePeriod(uint32_t period)
 {
     _sleepJob.setPeriod(period * 1000);
 }
@@ -110,12 +110,12 @@ void sfeDataLogger::set_sleepWakePeriod(uint32_t period)
 //---------------------------------------------------------------------------
 // LED
 //---------------------------------------------------------------------------
-bool sfeDataLogger::get_ledEnabled(void)
+bool flxAppFDNLogger::get_ledEnabled(void)
 {
     return !sfeLED.disabled();
 }
 //---------------------------------------------------------------------------
-void sfeDataLogger::set_ledEnabled(bool enabled)
+void flxAppFDNLogger::set_ledEnabled(bool enabled)
 {
     sfeLED.setDisabled(!enabled);
 }
@@ -123,12 +123,12 @@ void sfeDataLogger::set_ledEnabled(bool enabled)
 //---------------------------------------------------------------------------
 // Terminal Baudrate things
 //---------------------------------------------------------------------------
-uint32_t sfeDataLogger::get_termBaudRate(void)
+uint32_t flxAppFDNLogger::get_termBaudRate(void)
 {
     return _terminalBaudRate;
 }
 //---------------------------------------------------------------------------
-void sfeDataLogger::set_termBaudRate(uint32_t newRate)
+void flxAppFDNLogger::set_termBaudRate(uint32_t newRate)
 {
     // no change?
     if (newRate == _terminalBaudRate)
@@ -145,7 +145,7 @@ void sfeDataLogger::set_termBaudRate(uint32_t newRate)
     }
 }
 //---------------------------------------------------------------------------
-void sfeDataLogger::getStartupProperties(uint32_t &baudRate, uint32_t &startupDelay)
+void flxAppFDNLogger::getStartupProperties(uint32_t &baudRate, uint32_t &startupDelay)
 {
     // Do we have this block in storage? And yes, a little hacky with name :)
     flxStorageBlock *stBlk = _sysStorage.getBlock(((flxObject *)this)->name());
@@ -176,36 +176,36 @@ void sfeDataLogger::getStartupProperties(uint32_t &baudRate, uint32_t &startupDe
 }
 //---------------------------------------------------------------------------
 // local/board name things
-std::string sfeDataLogger::get_local_name(void)
+std::string flxAppFDNLogger::get_local_name(void)
 {
     return flux.localName();
 }
 //---------------------------------------------------------------------------
 
-void sfeDataLogger::set_local_name(std::string name)
+void flxAppFDNLogger::set_local_name(std::string name)
 {
     flux.setLocalName(name);
 }
 
 //---------------------------------------------------------------------------
 // Color text output
-bool sfeDataLogger::get_color_text(void)
+bool flxAppFDNLogger::get_color_text(void)
 {
     return flxSerial.colorEnabled();
 }
 //---------------------------------------------------------------------------
 
-void sfeDataLogger::set_color_text(bool enable)
+void flxAppFDNLogger::set_color_text(bool enable)
 {
     flxSerial.setColorEnabled(enable);
 }
 // for enabling system info in the log stream
 
-bool sfeDataLogger::get_logsysinfo(void)
+bool flxAppFDNLogger::get_logsysinfo(void)
 {
     return _bLogSysInfo;
 }
-void sfeDataLogger::set_logsysinfo(bool bEnableSysLog)
+void flxAppFDNLogger::set_logsysinfo(bool bEnableSysLog)
 {
     // Change?
     if (bEnableSysLog == _bLogSysInfo)
@@ -230,7 +230,7 @@ void sfeDataLogger::set_logsysinfo(bool bEnableSysLog)
 //---------------------------------------------------------------------------
 // verbose messages
 //---------------------------------------------------------------------------
-void sfeDataLogger::set_verbose(bool enable)
+void flxAppFDNLogger::set_verbose(bool enable)
 {
 
     // If disable, but we are in startup mode that enables verbose, don't set disable
@@ -249,7 +249,7 @@ void sfeDataLogger::set_verbose(bool enable)
     else if (!inOpMode(kAppOpStartVerboseOutput))
         flxSetLoggingInfo();
 }
-bool sfeDataLogger::get_verbose(void)
+bool flxAppFDNLogger::get_verbose(void)
 {
     return flxIsLoggingVerbose();
 }

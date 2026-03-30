@@ -9,7 +9,7 @@
  */
 #pragma once
 
-#include "sfeDataLogger.h"
+#include "flxAppFDNLogger.h"
 
 #include <Flux/flxCoreLog.h>
 #include <Flux/flxCoreParam.h>
@@ -66,12 +66,12 @@ class sfeDLSystemOp : public flxOperation
         // flxRegister(systemSDFree, "SD Free", "SD Card free space");
     }
 
-    sfeDLSystemOp(sfeDataLogger *dlApp) : sfeDLSystemOp()
+    sfeDLSystemOp(flxAppFDNLogger *dlApp) : sfeDLSystemOp()
     {
         setDataLogger(dlApp);
     }
 
-    void setDataLogger(sfeDataLogger *dlApp)
+    void setDataLogger(flxAppFDNLogger *dlApp)
     {
         _pDataLogger = dlApp;
     }
@@ -87,5 +87,5 @@ class sfeDLSystemOp : public flxOperation
     flxParameterOutUInt32<sfeDLSystemOp, &sfeDLSystemOp::get_heap> systemHeap;
 
   private:
-    sfeDataLogger *_pDataLogger;
+    flxAppFDNLogger *_pDataLogger;
 };

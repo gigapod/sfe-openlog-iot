@@ -9,7 +9,7 @@
  */
 #pragma once
 
-#include "sfeDataLogger.h"
+#include "flxAppFDNLogger.h"
 #include <ArduinoJson.h>
 
 #include <Flux/flxCoreLog.h>
@@ -19,13 +19,13 @@
 
 class sfeDLCommands
 {
-    typedef bool (sfeDLCommands::*commandCB_t)(sfeDataLogger *);
+    typedef bool (sfeDLCommands::*commandCB_t)(flxAppFDNLogger *);
     typedef std::map<std::string, commandCB_t> commandMap_t;
 
     //---------------------------------------------------------------------
     // Command Callbacks
     //---------------------------------------------------------------------
-    bool factoryResetDevice(sfeDataLogger *dlApp)
+    bool factoryResetDevice(flxAppFDNLogger *dlApp)
     {
         if (!dlApp)
             return false;
@@ -34,7 +34,7 @@ class sfeDLCommands
     }
 
     //---------------------------------------------------------------------
-    bool resetDevice(sfeDataLogger *dlApp)
+    bool resetDevice(flxAppFDNLogger *dlApp)
     {
         if (!dlApp)
             return false;
@@ -53,7 +53,7 @@ class sfeDLCommands
         return resetDeviceForced(dlApp);
     }
     //---------------------------------------------------------------------
-    bool resetDeviceForced(sfeDataLogger *dlApp)
+    bool resetDeviceForced(flxAppFDNLogger *dlApp)
     {
         if (!dlApp)
             return false;
@@ -66,7 +66,7 @@ class sfeDLCommands
         return true;
     }
     //---------------------------------------------------------------------
-    bool clearDeviceSettings(sfeDataLogger *dlApp)
+    bool clearDeviceSettings(flxAppFDNLogger *dlApp)
     {
         if (!dlApp)
             return false;
@@ -85,7 +85,7 @@ class sfeDLCommands
     }
 
     //---------------------------------------------------------------------
-    bool clearDeviceSettingsForced(sfeDataLogger *dlApp)
+    bool clearDeviceSettingsForced(flxAppFDNLogger *dlApp)
     {
         if (!dlApp)
             return false;
@@ -96,7 +96,7 @@ class sfeDLCommands
         return true;
     }
     //---------------------------------------------------------------------
-    bool restartDevice(sfeDataLogger *dlApp)
+    bool restartDevice(flxAppFDNLogger *dlApp)
     {
         if (dlApp)
             dlApp->_sysUpdate.restartDevicePrompt();
@@ -104,7 +104,7 @@ class sfeDLCommands
         return true;
     }
     //---------------------------------------------------------------------
-    bool restartDeviceForced(sfeDataLogger *dlApp)
+    bool restartDeviceForced(flxAppFDNLogger *dlApp)
     {
         if (dlApp)
             dlApp->_sysUpdate.restartDevice();
@@ -112,14 +112,14 @@ class sfeDLCommands
         return true;
     }
     //---------------------------------------------------------------------
-    bool aboutDevice(sfeDataLogger *dlApp)
+    bool aboutDevice(flxAppFDNLogger *dlApp)
     {
         if (dlApp)
             dlApp->displayAppAbout();
         return true;
     }
     //---------------------------------------------------------------------
-    bool helpDevice(sfeDataLogger *dlApp)
+    bool helpDevice(flxAppFDNLogger *dlApp)
     {
         flxLog_N(F("Available Commands:"));
         for (auto it : _commandMap)
@@ -134,7 +134,7 @@ class sfeDLCommands
     /// @param dlApp Pointer to the DataLogger App
     /// @retval bool indicates success (true) or failure (!true)
     ///
-    // bool loadJSONSettings(sfeDataLogger *dlApp)
+    // bool loadJSONSettings(flxAppFDNLogger *dlApp)
     // {
     //     if (!dlApp)
     //         return false;
@@ -163,7 +163,7 @@ class sfeDLCommands
     /// @param dlApp Pointer to the DataLogger App
     /// @retval bool indicates success (true) or failure (!true)
     ///
-    bool saveSettings(sfeDataLogger *dlApp)
+    bool saveSettings(flxAppFDNLogger *dlApp)
     {
         if (!dlApp)
             return false;
@@ -184,7 +184,7 @@ class sfeDLCommands
     /// @param dlApp Pointer to the DataLogger App
     /// @retval bool indicates success (true) or failure (!true)
     ///
-    bool heapStatus(sfeDataLogger *dlApp)
+    bool heapStatus(flxAppFDNLogger *dlApp)
     {
         // just dump out the current heap
         flxLog_I(F("System Heap - Total: %dB Free: %dB (%.1f%%)"), ESP.getHeapSize(), ESP.getFreeHeap(),
@@ -198,7 +198,7 @@ class sfeDLCommands
     /// @param dlApp Pointer to the DataLogger App
     /// @retval bool indicates success (true) or failure (!true)
     ///
-    bool logLevelVerbose(sfeDataLogger *dlApp)
+    bool logLevelVerbose(flxAppFDNLogger *dlApp)
     {
         flxLog.setLogLevel(flxLogVerbose);
         flxLog_V(F("Output level set to Verbose"));
@@ -211,7 +211,7 @@ class sfeDLCommands
     /// @param theApp Pointer to the DataLogger App
     /// @retval bool indicates success (true) or failure (!true)
     ///
-    bool toggleVerboseOutput(sfeDataLogger *theApp)
+    bool toggleVerboseOutput(flxAppFDNLogger *theApp)
     {
 
         if (theApp)
@@ -227,7 +227,7 @@ class sfeDLCommands
     /// @param dlApp Pointer to the DataLogger App
     /// @retval bool indicates success (true) or failure (!true)
     ///
-    bool logRateStats(sfeDataLogger *dlApp)
+    bool logRateStats(flxAppFDNLogger *dlApp)
     {
         if (!dlApp)
             return false;
@@ -249,7 +249,7 @@ class sfeDLCommands
     /// @param dlApp Pointer to the DataLogger App
     /// @retval bool indicates success (true) or failure (!true)
     ///
-    bool logRateToggle(sfeDataLogger *dlApp)
+    bool logRateToggle(flxAppFDNLogger *dlApp)
     {
         if (!dlApp)
             return false;
@@ -267,7 +267,7 @@ class sfeDLCommands
     /// @param dlApp Pointer to the DataLogger App
     /// @retval bool indicates success (true) or failure (!true)
     ///
-    bool wifiStats(sfeDataLogger *dlApp)
+    bool wifiStats(flxAppFDNLogger *dlApp)
     {
         if (!dlApp)
             return false;
@@ -295,7 +295,7 @@ class sfeDLCommands
     /// @param dlApp Pointer to the DataLogger App
     /// @retval bool indicates success (true) or failure (!true)
     ///
-    // bool sdCardStats(sfeDataLogger *dlApp)
+    // bool sdCardStats(flxAppFDNLogger *dlApp)
     // {
     //     if (!dlApp)
     //         return false;
@@ -329,7 +329,7 @@ class sfeDLCommands
     /// @param dlApp Pointer to the DataLogger App
     /// @retval bool indicates success (true) or failure (!true)
     ///
-    bool listLoadedDevices(sfeDataLogger *dlApp)
+    bool listLoadedDevices(flxAppFDNLogger *dlApp)
     {
         if (!dlApp)
             return false;
@@ -357,7 +357,7 @@ class sfeDLCommands
     /// @param dlApp Pointer to the DataLogger App
     /// @retval bool indicates success (true) or failure (!true)
     ///
-    bool outputSystemTime(sfeDataLogger *dlApp)
+    bool outputSystemTime(flxAppFDNLogger *dlApp)
     {
         if (!dlApp)
             return false;
@@ -381,7 +381,7 @@ class sfeDLCommands
     /// @param dlApp Pointer to the DataLogger App
     /// @retval bool indicates success (true) or failure (!true)
     ///
-    bool outputUpTime(sfeDataLogger *dlApp)
+    bool outputUpTime(flxAppFDNLogger *dlApp)
     {
         if (!dlApp)
             return false;
@@ -402,7 +402,7 @@ class sfeDLCommands
     /// @param dlApp Pointer to the DataLogger App
     /// @retval bool indicates success (true) or failure (!true)
     ///
-    bool logObservationNow(sfeDataLogger *dlApp)
+    bool logObservationNow(flxAppFDNLogger *dlApp)
     {
         if (!dlApp)
             return false;
@@ -419,7 +419,7 @@ class sfeDLCommands
     /// @param dlApp Pointer to the DataLogger App
     /// @retval bool indicates success (true) or failure (!true)
     ///
-    bool printVersion(sfeDataLogger *dlApp)
+    bool printVersion(flxAppFDNLogger *dlApp)
     {
 
         char szBuffer[128];
@@ -438,7 +438,7 @@ class sfeDLCommands
     /// @param dlApp Pointer to the DataLogger App
     /// @retval bool indicates success (true) or failure (!true)
     ///
-    bool printDeviceID(sfeDataLogger *dlApp)
+    bool printDeviceID(flxAppFDNLogger *dlApp)
     {
 
         flxLog_I("Device ID: %s", flux.deviceId());
@@ -452,7 +452,7 @@ class sfeDLCommands
     /// @param dlApp Pointer to the DataLogger App
     /// @retval bool indicates success (true) or failure (!true)
     ///
-    bool printBuildDate(sfeDataLogger *dlApp)
+    bool printBuildDate(flxAppFDNLogger *dlApp)
     {
 
         flxLog_I("Build Date: %s", dlApp->getBuildDate());
@@ -489,7 +489,7 @@ class sfeDLCommands
     };
 
   public:
-    bool processCommand(sfeDataLogger *dlApp)
+    bool processCommand(flxAppFDNLogger *dlApp)
     {
         // The data editor we're using - serial field
         flxSerialField theDataEditor;

@@ -137,11 +137,11 @@ void flxApplication::set_termBaudRate(uint32_t newRate)
     _terminalBaudRate = newRate;
 
     // Was this done during an edit session?
-    if (inOpMode(kDataLoggerOpEditing))
+    if (inOpMode(kFlxApplicationOpEditing))
     {
         flxLog_N(F("\n\r\n\r\t[The new baud rate of %u takes effect when this device is restarted]"), newRate);
         delay(700);
-        setOpMode(kDataLoggerOpPendingRestart);
+        setOpMode(kFlxApplicationOpPendingRestart);
     }
 }
 //---------------------------------------------------------------------------
@@ -240,7 +240,7 @@ void flxApplication::set_verbose(bool enable)
         flxSetLoggingVerbose();
 
         // if in startup, the verbose mode is being set via pref restore. Note the change to user
-        if (inOpMode(kDataLoggerOpStartup))
+        if (inOpMode(kFlxApplicationOpStartup))
         {
             flxLog_N("");
             flxLog_V(F("Verbose output enabled"));

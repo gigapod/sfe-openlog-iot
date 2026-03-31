@@ -131,21 +131,21 @@ const uint32_t kDefaultTerminalBaudRate = 115200;
 const uint32_t kStartupMenuDefaultDelaySecs = 2;
 
 // Operation mode flags
-#define kDataLoggerOpNone (0)
-#define kDataLoggerOpEditing (1 << 0)
-#define kDataLoggerOpStartup (1 << 1)
-#define kDataLoggerOpPendingRestart (1 << 2)
+#define kFlxApplicationOpNone (0)
+#define kFlxApplicationOpEditing (1 << 0)
+#define kFlxApplicationOpStartup (1 << 1)
+#define kFlxApplicationOpPendingRestart (1 << 2)
 
 // startup things
-#define kDataLoggerOpStartNoAutoload (1 << 3)
-#define kDataLoggerOpStartListDevices (1 << 4)
-#define kDataLoggerOpStartNoSettings (1 << 5)
-#define kDataLoggerOpStartNoWiFi (1 << 6)
+#define kFlxApplicationOpStartNoAutoload (1 << 3)
+#define kFlxApplicationOpStartListDevices (1 << 4)
+#define kFlxApplicationOpStartNoSettings (1 << 5)
+#define kFlxApplicationOpStartNoWiFi (1 << 6)
 #define kAppOpStartVerboseOutput (1 << 7)
 
-#define kDataLoggerOpStartAllFlags                                                                                     \
-    (kDataLoggerOpStartNoAutoload | kDataLoggerOpStartListDevices | kDataLoggerOpStartNoSettings |                     \
-     kDataLoggerOpStartNoWiFi | kAppOpStartVerboseOutput)
+#define kFlxApplicationOpStartAllFlags                                                                                 \
+    (kFlxApplicationOpStartNoAutoload | kFlxApplicationOpStartListDevices | kFlxApplicationOpStartNoSettings |         \
+     kFlxApplicationOpStartNoWiFi | kAppOpStartVerboseOutput)
 
 #define inOpMode(__mode__) ((_opFlags & __mode__) == __mode__)
 #define setOpMode(__mode__) _opFlags |= __mode__

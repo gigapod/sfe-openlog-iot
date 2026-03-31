@@ -184,7 +184,7 @@ void flxApplication::onSettingsEdit(bool bLoading)
 
     if (bLoading)
     {
-        setOpMode(kDataLoggerOpEditing);
+        setOpMode(kFlxApplicationOpEditing);
         // sfeLED.on(sfeLED.LightGray);
     }
     else
@@ -192,17 +192,17 @@ void flxApplication::onSettingsEdit(bool bLoading)
         // sfeLED.off();
 
         // no longer editing
-        clearOpMode(kDataLoggerOpEditing);
+        clearOpMode(kFlxApplicationOpEditing);
 
         // did the editing operation set a restart flag? If so see if the user wants to restart
         // the device.
-        if (inOpMode(kDataLoggerOpPendingRestart))
+        if (inOpMode(kFlxApplicationOpPendingRestart))
         {
             flxLog_N("\n\rSome changes required a device restart to take effect...");
             _sysUpdate.restartDevice();
 
             // this shouldn't return unless user aborted
-            clearOpMode(kDataLoggerOpPendingRestart);
+            clearOpMode(kFlxApplicationOpPendingRestart);
         }
     }
 }
@@ -380,20 +380,20 @@ bool flxApplication::sysSetup()
     // _boardButton.on_buttonPressed.call(this, &flxApplication::onButtonPressed);
 
     // was device auto load disabled by startup commands?
-    if (inOpMode(kDataLoggerOpStartNoAutoload))
+    if (inOpMode(kFlxApplicationOpStartNoAutoload))
         flux.setAutoload(false);
 
     // was settings restore disabled by startup commands?
-    if (inOpMode(kDataLoggerOpStartNoSettings))
+    if (inOpMode(kFlxApplicationOpStartNoSettings))
         flux.setLoadSettings(false);
 
 #if defined(CONFIG_FLUX_WIFI)
     // was wifi startup disabled by startup commands?
-    if (inOpMode(kDataLoggerOpStartNoWiFi))
+    if (inOpMode(kFlxApplicationOpStartNoWiFi))
         _wifiConnection.setDelayedStartup();
 #endif
     // was wifi startup disabled by startup commands?
-    if (inOpMode(kDataLoggerOpStartListDevices))
+    if (inOpMode(kFlxApplicationOpStartListDevices))
         flux.dumpDeviceAutoLoadTable();
 
     // setup our event callbacks for system/framework events;
@@ -483,15 +483,15 @@ void flxApplication::onInitStartupCommands(uint delaySecs)
         const char *name;
     } startupCommand_t;
     startupCommand_t commands[] = {
-        {'n', kDataLoggerOpNone, "normal-startup"},
+        {'n', kFlxApplicationOpNone, "normal-startup"},
         {'v', kAppOpStartVerboseOutput, "verbose-output-enabled"},
-        {'a', kDataLoggerOpStartNoAutoload, "device-auto-load-disabled"},
-        {'l', kDataLoggerOpStartListDevices, "i2c-driver-listing-enabled"},
+        {'a', kFlxApplicationOpStartNoAutoload, "device-auto-load-disabled"},
+        {'l', kFlxApplicationOpStartListDevices, "i2c-driver-listing-enabled"},
 #if defined(CONFIG_FLUX_WIFI)
-        {'w', kDataLoggerOpStartNoWiFi, "wifi-disabled"},
+        {'w', kFlxApplicationOpStartNoWiFi, "wifi-disabled"},
 #endif
 #if defined(CONFIG_FLUX_PREFS)
-        {'s', kDataLoggerOpStartNoSettings, "settings-restore-disabled"},
+        {'s', kFlxApplicationOpStartNoSettings, "settings-restore-disabled"},
 #endif
     };
 
@@ -579,7 +579,7 @@ void flxApplication::sysInit(void)
     // sfeLED.initialize();
     // sfeLED.on(sfeLED.Green);
 
-    setOpMode(kDataLoggerOpStartup);
+    setOpMode(kFlxApplicationOpStartup);
 
     startupDelaySecs = theDelay;
     onInitStartupCommands(theDelay);
@@ -722,8 +722,8 @@ bool flxApplication::sysStart()
     flxRegisterEventCB(flxEvent::kOnFluxRemoveDevice, this, &flxApplication::onDeviceRemoved);
 
     // clear startup flags/mode
-    clearOpMode(kDataLoggerOpStartup);
-    clearOpMode(kDataLoggerOpStartAllFlags);
+    clearOpMode(kFlxApplicationOpStartup);
+    clearOpMode(kFlxApplicationOpStartAllFlags);
 
     // sfeLED.off();
 
@@ -782,7 +782,7 @@ const char *flxApplication::getBuildDate(void)
 void flxApplication::onDeviceAdded(uint32_t uiDevice)
 {
     // if in startup skip
-    if (inOpMode(kDataLoggerOpStartup))
+    if (inOpMode(kFlxApplicationOpStartup))
         return;
 
     flxDevice *pDevice = (flxDevice *)uiDevice;
@@ -797,7 +797,7 @@ void flxApplication::onDeviceAdded(uint32_t uiDevice)
 void flxApplication::onDeviceRemoved(uint32_t uiDevice)
 {
     // if in startup skip
-    if (inOpMode(kDataLoggerOpStartup))
+    if (inOpMode(kFlxApplicationOpStartup))
         return;
 
     flxDevice *pDevice = (flxDevice *)uiDevice;

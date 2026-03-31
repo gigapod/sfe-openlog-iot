@@ -16,13 +16,13 @@
 
 #include <Flux.h>
 
-#include "flxAppFDNLogger.h"
+#include "flxApplication.h"
 #include "sfeDLButton.h"
 
 /////////////////////////////////////////////////////////////////////////
 // Define our application class for the data logger
 /////////////////////////////////////////////////////////////////////////
-class sfeDataLogger : public flxAppFDNLogger
+class sfeDataLogger : public flxApplication
 {
   public:
     //---------------------------------------------------------------------------

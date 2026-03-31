@@ -13,10 +13,10 @@
  *
  */
 
-#include "flxAppFDNLogger.h"
+#include "flxApplication.h"
 #include <Flux/flxSerial.h>
 
-void flxAppFDNLogger::_displayAboutObjHelper(char pre_ch, const char *szName, bool enabled)
+void flxApplication::_displayAboutObjHelper(char pre_ch, const char *szName, bool enabled)
 {
     flxLog_N_("%c    %-20s  : ", pre_ch, szName);
     if (enabled)
@@ -30,7 +30,7 @@ void flxAppFDNLogger::_displayAboutObjHelper(char pre_ch, const char *szName, bo
 }
 //---------------------------------------------------------------------------
 // "about"
-void flxAppFDNLogger::displayAppStatus(bool useInfo)
+void flxApplication::displayAppStatus(bool useInfo)
 {
 
     // type of output to use?
@@ -226,7 +226,7 @@ void flxAppFDNLogger::displayAppStatus(bool useInfo)
 }
 
 //---------------------------------------------------------------------------
-void flxAppFDNLogger::displayAppAbout()
+void flxApplication::displayAppAbout()
 {
 
     char szBuffer[128];

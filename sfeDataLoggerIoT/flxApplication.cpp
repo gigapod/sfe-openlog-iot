@@ -13,7 +13,7 @@
  *
  */
 
-#include "flxAppFDNLogger.h"
+#include "flxApplication.h"
 #include "sfeDLCommands.h"
 #include "sfeDLLed.h"
 // #include "sfeDLMode.h"
@@ -66,7 +66,7 @@ static const uint8_t _app_jump[] = {104, 72, 67, 51,  74,  67,  108, 99, 104, 11
 // Startup/Timeout for serial connection to init...
 #define kSerialStartupDelayMS 5000
 
-constexpr char *flxAppFDNLogger::kLogFormatNames[];
+constexpr char *flxApplication::kLogFormatNames[];
 
 // delay used in loop during startup
 const uint32_t kStartupLoopDelayMS = 70;
@@ -76,7 +76,7 @@ const uint32_t kStartupLoopDelayMS = 70;
 //---------------------------------------------------------------------------
 //
 
-flxAppFDNLogger::flxAppFDNLogger()
+flxApplication::flxApplication()
     : _logTypeSer{kAppLogTypeNone}, _timer{kDefaultLogInterval}, _modeFlags{0}, _opFlags{0}, _bSleepEnabled{false},
       _bLogSysInfo{false}, _pSystemInfo{nullptr}
 {
@@ -139,7 +139,7 @@ flxAppFDNLogger::flxAppFDNLogger()
 
     // set sleep default interval && event handler method
     sleepInterval = kSystemSleepSleepSec;
-    _sleepJob.setup("sleep", kSystemSleepSleepSec * 1000, this, &flxAppFDNLogger::enterSleepMode, true);
+    _sleepJob.setup("sleep", kSystemSleepSleepSec * 1000, this, &flxApplication::enterSleepMode, true);
 
     // app key
     flux.setAppToken(_app_jump, sizeof(_app_jump));
@@ -155,7 +155,7 @@ flxAppFDNLogger::flxAppFDNLogger()
 //---------------------------------------------------------------------------
 // Display things during firmware loading
 //---------------------------------------------------------------------------
-void flxAppFDNLogger::onFirmwareLoad(bool bLoading)
+void flxApplication::onFirmwareLoad(bool bLoading)
 {
     if (bLoading)
         sfeLED.on(sfeLED.Yellow);
@@ -166,7 +166,7 @@ void flxAppFDNLogger::onFirmwareLoad(bool bLoading)
 //---------------------------------------------------------------------------
 // Flash led on error/warnings
 //---------------------------------------------------------------------------
-void flxAppFDNLogger::onErrorMessage(uint8_t msgType)
+void flxApplication::onErrorMessage(uint8_t msgType)
 {
     // send an LED thing
     if (msgType == (uint8_t)flxLogError)
@@ -179,7 +179,7 @@ void flxAppFDNLogger::onErrorMessage(uint8_t msgType)
 //---------------------------------------------------------------------------
 // Display things during settings edits
 //---------------------------------------------------------------------------
-void flxAppFDNLogger::onSettingsEdit(bool bLoading)
+void flxApplication::onSettingsEdit(bool bLoading)
 {
 
     if (bLoading)
@@ -208,13 +208,13 @@ void flxAppFDNLogger::onSettingsEdit(bool bLoading)
 }
 #endif
 //---------------------------------------------------------------------------
-void flxAppFDNLogger::onSystemActivity(void)
+void flxApplication::onSystemActivity(void)
 {
     // sfeLED.flash(sfeLED.Gray);
 }
 
 //---------------------------------------------------------------------------
-void flxAppFDNLogger::onSystemActivityLow(void)
+void flxApplication::onSystemActivityLow(void)
 {
     // sfeLED.flash(sfeLED.Blue);
 }
@@ -224,7 +224,7 @@ void flxAppFDNLogger::onSystemActivityLow(void)
 //---------------------------------------------------------------------------
 //
 // CAlled when the button is pressed and an increment time passed
-void flxAppFDNLogger::onButtonPressed(uint32_t increment)
+void flxApplication::onButtonPressed(uint32_t increment)
 {
 
     // we need LED on for visual feedback...
@@ -252,7 +252,7 @@ void flxAppFDNLogger::onButtonPressed(uint32_t increment)
     // }
 }
 //---------------------------------------------------------------------------
-void flxAppFDNLogger::onButtonReleased(uint32_t increment)
+void flxApplication::onButtonReleased(uint32_t increment)
 {
     if (increment > 0)
         sfeLED.off();
@@ -264,7 +264,7 @@ void flxAppFDNLogger::onButtonReleased(uint32_t increment)
 // onSetup()
 //
 // Called by the system before devices are loaded, and system initialized
-bool flxAppFDNLogger::sysSetup()
+bool flxApplication::sysSetup()
 {
 
     // do we need to disable startup messages (Warn and Error still displayed)
@@ -308,7 +308,7 @@ bool flxAppFDNLogger::sysSetup()
 
 #if defined(CONFIG_FLUX_PREFS_SERIAL)
     // Have settings saved when editing via serial console is complete.
-    flxRegisterEventCB(flxEvent::kOnEdit, this, &flxAppFDNLogger::onSettingsEdit);
+    flxRegisterEventCB(flxEvent::kOnEdit, this, &flxApplication::onSettingsEdit);
     flxRegisterEventCB(flxEvent::kOnEditFinished, &flxSettings, &flxSettingsSave::saveEvent_CB);
 
     // flxRegisterEventCB(flxEvent::kOnNewFile, &flxSettings, &flxSettingsSave::saveEvent_CB);
@@ -359,7 +359,7 @@ bool flxAppFDNLogger::sysSetup()
     _sysUpdate.enableOTAUpdates(kDataLoggerOTAManifestURL);
 #endif
 
-    flxRegisterEventCB(flxEvent::kOnFirmwareLoad, this, &flxAppFDNLogger::onFirmwareLoad);
+    flxRegisterEventCB(flxEvent::kOnFirmwareLoad, this, &flxApplication::onFirmwareLoad);
 
     // Add to the system - manual add so it appears last in the ops list
     _sysUpdate.setTitle("Advanced");
@@ -370,14 +370,14 @@ bool flxAppFDNLogger::sysSetup()
     flux.add(_boardButton);
 
     // wire in LED to the logging system
-    // flxRegisterEventCB(flxEvent::kLogErrWarn, this, &flxAppFDNLogger::onErrorMessage);
+    // flxRegisterEventCB(flxEvent::kLogErrWarn, this, &flxApplication::onErrorMessage);
 
     // We want an event every 5 seconds
     // _boardButton.setPressIncrement(kButtonPressedIncrement);
 
     // Button events we're listening on
-    // _boardButton.on_buttonRelease.call(this, &flxAppFDNLogger::onButtonReleased);
-    // _boardButton.on_buttonPressed.call(this, &flxAppFDNLogger::onButtonPressed);
+    // _boardButton.on_buttonRelease.call(this, &flxApplication::onButtonReleased);
+    // _boardButton.on_buttonPressed.call(this, &flxApplication::onButtonPressed);
 
     // was device auto load disabled by startup commands?
     if (inOpMode(kDataLoggerOpStartNoAutoload))
@@ -397,8 +397,8 @@ bool flxAppFDNLogger::sysSetup()
         flux.dumpDeviceAutoLoadTable();
 
     // setup our event callbacks for system/framework events;
-    // flxRegisterEventCB(flxEvent::kOnSystemActivity, this, &flxAppFDNLogger::onSystemActivity);
-    // flxRegisterEventCB(flxEvent::kOnSystemActivityLow, this, &flxAppFDNLogger::onSystemActivityLow);
+    // flxRegisterEventCB(flxEvent::kOnSystemActivity, this, &flxApplication::onSystemActivity);
+    // flxRegisterEventCB(flxEvent::kOnSystemActivityLow, this, &flxApplication::onSystemActivityLow);
 
     return flxApplicationBase::sysSetup();
 }
@@ -411,7 +411,7 @@ bool flxAppFDNLogger::sysSetup()
 //
 // Called after qwiic/i2c auto-load, but before system state restore
 
-void flxAppFDNLogger::sysDeviceLoad()
+void flxApplication::sysDeviceLoad()
 {
 
     // // setup the GNSS device - will create some properties that should be visible
@@ -430,7 +430,7 @@ void flxAppFDNLogger::sysDeviceLoad()
 //
 // Called just before settings are restored on startup.
 
-void flxAppFDNLogger::sysRestore(void)
+void flxApplication::sysRestore(void)
 {
     // At this point, we know enough about the device to set details about it.
     char prefix[5] = "0000";
@@ -442,7 +442,7 @@ void flxAppFDNLogger::sysRestore(void)
 
 //---------------------------------------------------------------------
 // reset the device - erase settings, reboot
-void flxAppFDNLogger::resetDevice(void)
+void flxApplication::resetDevice(void)
 {
 #if defined(CONFIG_FLUX_PREFS)
     _sysStorage.resetStorage();
@@ -462,7 +462,7 @@ void flxAppFDNLogger::resetDevice(void)
 /// @brief Checks for any before startup commands from the user
 ///
 
-void flxAppFDNLogger::onInitStartupCommands(uint delaySecs)
+void flxApplication::onInitStartupCommands(uint delaySecs)
 {
 
     // Waking up from sleep?
@@ -560,7 +560,7 @@ void flxAppFDNLogger::onInitStartupCommands(uint delaySecs)
 //
 // Called before the system/framework is up
 
-void flxAppFDNLogger::sysInit(void)
+void flxApplication::sysInit(void)
 {
     // Did the user set a serial value?
     uint32_t theRate;
@@ -599,7 +599,7 @@ void flxAppFDNLogger::sysInit(void)
 // onStart()
 //
 // Called after the system is loaded, restored and initialized
-bool flxAppFDNLogger::sysStart()
+bool flxApplication::sysStart()
 {
 
     // flxLog_I("DEBUG: onStart() - entry -  Free Heap: %d", ESP.getFreeHeap());
@@ -718,8 +718,8 @@ bool flxAppFDNLogger::sysStart()
     // _iotWebServer.setFilePrefix(_theOutputFile.filePrefix());
 
     // Register our device management event handlers
-    flxRegisterEventCB(flxEvent::kOnFluxAddDevice, this, &flxAppFDNLogger::onDeviceAdded);
-    flxRegisterEventCB(flxEvent::kOnFluxRemoveDevice, this, &flxAppFDNLogger::onDeviceRemoved);
+    flxRegisterEventCB(flxEvent::kOnFluxAddDevice, this, &flxApplication::onDeviceAdded);
+    flxRegisterEventCB(flxEvent::kOnFluxRemoveDevice, this, &flxApplication::onDeviceRemoved);
 
     // clear startup flags/mode
     clearOpMode(kDataLoggerOpStartup);
@@ -737,7 +737,7 @@ bool flxAppFDNLogger::sysStart()
 }
 
 //---------------------------------------------------------------------------
-void flxAppFDNLogger::enterSleepMode()
+void flxApplication::enterSleepMode()
 {
 
     if (!sleepEnabled())
@@ -771,7 +771,7 @@ void flxAppFDNLogger::enterSleepMode()
 }
 
 // simple helper to get the build time of the firmware
-const char *flxAppFDNLogger::getBuildDate(void)
+const char *flxApplication::getBuildDate(void)
 {
     return __TIMESTAMP__;
 }
@@ -779,7 +779,7 @@ const char *flxAppFDNLogger::getBuildDate(void)
 //---------------------------------------------------------------------------
 // Device bookkeeping
 //---------------------------------------------------------------------------
-void flxAppFDNLogger::onDeviceAdded(uint32_t uiDevice)
+void flxApplication::onDeviceAdded(uint32_t uiDevice)
 {
     // if in startup skip
     if (inOpMode(kDataLoggerOpStartup))
@@ -794,7 +794,7 @@ void flxAppFDNLogger::onDeviceAdded(uint32_t uiDevice)
     _logger.add(pDevice);
 #endif
 }
-void flxAppFDNLogger::onDeviceRemoved(uint32_t uiDevice)
+void flxApplication::onDeviceRemoved(uint32_t uiDevice)
 {
     // if in startup skip
     if (inOpMode(kDataLoggerOpStartup))
@@ -814,7 +814,7 @@ void flxAppFDNLogger::onDeviceRemoved(uint32_t uiDevice)
 //
 // Called during the operational loop of the system.
 
-bool flxAppFDNLogger::loop()
+bool flxApplication::loop()
 {
     // key press at Serial Console? What to do??
     if (Serial.available())

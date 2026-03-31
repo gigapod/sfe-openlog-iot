@@ -153,12 +153,12 @@ const uint32_t kStartupMenuDefaultDelaySecs = 2;
 //
 // forward declare of our system info class
 class sfeDLSystemOp;
-// flxAppFDNLogger
+// flxApplication
 //-------------------------------------------------------------------------
 // Define our application class the config based application
 //-------------------------------------------------------------------------
 
-class flxAppFDNLogger : public flxApplicationBase
+class flxApplication : public flxApplicationBase
 {
   private:
     //---------------------------------------------------------------------
@@ -174,7 +174,7 @@ class flxAppFDNLogger : public flxApplicationBase
     // Constructor
     //
 
-    flxAppFDNLogger();
+    flxApplication();
 
     //---------------------------------------------------------------------------
     // onSetup()
@@ -280,58 +280,58 @@ class flxAppFDNLogger : public flxApplicationBase
 
     // Define our log type properties
 
-    flxPropertyRWUInt8<flxAppFDNLogger, &flxAppFDNLogger::get_logTypeSer, &flxAppFDNLogger::set_logTypeSer>
-        serialLogType = {kAppLogTypeCSV,
-                         {{kLogFormatNames[kAppLogTypeNone], kAppLogTypeNone},
-                          {kLogFormatNames[kAppLogTypeCSV], kAppLogTypeCSV},
-                          {kLogFormatNames[kAppLogTypeJSON], kAppLogTypeJSON}}};
+    flxPropertyRWUInt8<flxApplication, &flxApplication::get_logTypeSer, &flxApplication::set_logTypeSer> serialLogType =
+        {kAppLogTypeCSV,
+         {{kLogFormatNames[kAppLogTypeNone], kAppLogTypeNone},
+          {kLogFormatNames[kAppLogTypeCSV], kAppLogTypeCSV},
+          {kLogFormatNames[kAppLogTypeJSON], kAppLogTypeJSON}}};
 
     // JSON output buffer size
-    flxPropertyRWUInt32<flxAppFDNLogger, &flxAppFDNLogger::get_jsonBufferSize, &flxAppFDNLogger::set_jsonBufferSize>
+    flxPropertyRWUInt32<flxApplication, &flxApplication::get_jsonBufferSize, &flxApplication::set_jsonBufferSize>
         jsonBufferSize = {100, 5000};
 
     // System sleep properties
-    flxPropertyUInt32<flxAppFDNLogger> sleepInterval = {5, 86400};
-    flxPropertyRWUInt32<flxAppFDNLogger, &flxAppFDNLogger::get_sleepWakePeriod, &flxAppFDNLogger::set_sleepWakePeriod>
+    flxPropertyUInt32<flxApplication> sleepInterval = {5, 86400};
+    flxPropertyRWUInt32<flxApplication, &flxApplication::get_sleepWakePeriod, &flxApplication::set_sleepWakePeriod>
         wakeInterval = {60, 86400};
-    flxPropertyRWBool<flxAppFDNLogger, &flxAppFDNLogger::get_sleepEnabled, &flxAppFDNLogger::set_sleepEnabled>
+    flxPropertyRWBool<flxApplication, &flxApplication::get_sleepEnabled, &flxApplication::set_sleepEnabled>
         sleepEnabled;
 
     // Display LED Enabled?
-    flxPropertyRWBool<flxAppFDNLogger, &flxAppFDNLogger::get_ledEnabled, &flxAppFDNLogger::set_ledEnabled> ledEnabled;
+    flxPropertyRWBool<flxApplication, &flxApplication::get_ledEnabled, &flxApplication::set_ledEnabled> ledEnabled;
 
     // Serial Baud rate setting
-    flxPropertyRWUInt32<flxAppFDNLogger, &flxAppFDNLogger::get_termBaudRate, &flxAppFDNLogger::set_termBaudRate>
+    flxPropertyRWUInt32<flxApplication, &flxApplication::get_termBaudRate, &flxApplication::set_termBaudRate>
         serialBaudRate = {1200, 500000};
 
     // Verbose Device Names
-    flxPropertyRWBool<flxAppFDNLogger, &flxAppFDNLogger::get_verbose_dev_name, &flxAppFDNLogger::set_verbose_dev_name>
+    flxPropertyRWBool<flxApplication, &flxApplication::get_verbose_dev_name, &flxApplication::set_verbose_dev_name>
         verboseDevNames;
 
-    flxParameterInVoid<flxAppFDNLogger, &flxAppFDNLogger::about_app_status> aboutApplication;
+    flxParameterInVoid<flxApplication, &flxApplication::about_app_status> aboutApplication;
 
     // board user set name
-    flxPropertyRWString<flxAppFDNLogger, &flxAppFDNLogger::get_local_name, &flxAppFDNLogger::set_local_name>
+    flxPropertyRWString<flxApplication, &flxApplication::get_local_name, &flxApplication::set_local_name>
         localBoardName;
 
     // Color Text Output
-    flxPropertyRWBool<flxAppFDNLogger, &flxAppFDNLogger::get_color_text, &flxAppFDNLogger::set_color_text>
+    flxPropertyRWBool<flxApplication, &flxApplication::get_color_text, &flxApplication::set_color_text>
         colorTextOutput = {true};
 
     // startup delay setting
-    flxPropertyUInt32<flxAppFDNLogger> startupDelaySecs = {0, 60};
+    flxPropertyUInt32<flxApplication> startupDelaySecs = {0, 60};
 
-    flxPropertyUInt8<flxAppFDNLogger> startupOutputMode = {
+    flxPropertyUInt8<flxApplication> startupOutputMode = {
         kAppStartupMsgNormal,
         {{"Normal", kAppStartupMsgNormal}, {"Compact", kAppStartupMsgCompact}, {"Disabled", kAppStartupMsgNone}}};
 
     // Verbose messages enabled?
-    flxPropertyRWBool<flxAppFDNLogger, &flxAppFDNLogger::get_verbose, &flxAppFDNLogger::set_verbose> verboseEnabled = {
+    flxPropertyRWBool<flxApplication, &flxApplication::get_verbose, &flxApplication::set_verbose> verboseEnabled = {
         false};
 
     // log system info
     // Enabled/Disabled
-    flxPropertyRWBool<flxAppFDNLogger, &flxAppFDNLogger::get_logsysinfo, &flxAppFDNLogger::set_logsysinfo> logSysInfo;
+    flxPropertyRWBool<flxApplication, &flxApplication::get_logsysinfo, &flxApplication::set_logsysinfo> logSysInfo;
 
   private:
     void enterSleepMode(void);

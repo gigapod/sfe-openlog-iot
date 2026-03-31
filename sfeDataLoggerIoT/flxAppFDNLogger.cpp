@@ -400,7 +400,7 @@ bool flxAppFDNLogger::sysSetup()
     // flxRegisterEventCB(flxEvent::kOnSystemActivity, this, &flxAppFDNLogger::onSystemActivity);
     // flxRegisterEventCB(flxEvent::kOnSystemActivityLow, this, &flxAppFDNLogger::onSystemActivityLow);
 
-    return flxApplication::sysSetup();
+    return flxApplicationBase::sysSetup();
 }
 
 //---------------------------------------------------------------------------
@@ -423,7 +423,7 @@ void flxAppFDNLogger::sysDeviceLoad()
 
     // // setup interrupt event
     // setInterruptEvent();
-    flxApplication::sysDeviceLoad();
+    flxApplicationBase::sysDeviceLoad();
 }
 //---------------------------------------------------------------------
 // onRestore()
@@ -437,7 +437,7 @@ void flxAppFDNLogger::sysRestore(void)
     // (void)dlModeCheckPrefix(_modeFlags, prefix);
     setAppClassID(kDLAppClassNameID, prefix); // internal name string for this app type
 
-    flxApplication::sysRestore();
+    flxApplicationBase::sysRestore();
 }
 
 //---------------------------------------------------------------------
@@ -589,7 +589,7 @@ void flxAppFDNLogger::sysInit(void)
     //     flux.insert_after(&flxSettings, &flxClock);
     // #endif
 
-    flxApplication::sysInit();
+    flxApplicationBase::sysInit();
 }
 
 //---------------------------------------------------------------------------
@@ -733,7 +733,7 @@ bool flxAppFDNLogger::sysStart()
 
     // log now!
     _timer.trigger();
-    return flxApplication::sysStart();
+    return flxApplicationBase::sysStart();
 }
 
 //---------------------------------------------------------------------------

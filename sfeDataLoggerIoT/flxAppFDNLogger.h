@@ -154,10 +154,11 @@ const uint32_t kStartupMenuDefaultDelaySecs = 2;
 // forward declare of our system info class
 class sfeDLSystemOp;
 // flxAppFDNLogger
-/////////////////////////////////////////////////////////////////////////
-// Define our application class for the data logger
-/////////////////////////////////////////////////////////////////////////
-class flxAppFDNLogger : public flxApplication
+//-------------------------------------------------------------------------
+// Define our application class the config based application
+//-------------------------------------------------------------------------
+
+class flxAppFDNLogger : public flxApplicationBase
 {
   private:
     //---------------------------------------------------------------------

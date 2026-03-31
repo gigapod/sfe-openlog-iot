@@ -108,7 +108,7 @@
 
 #include "sfeDLBoard.h"
 
-#include "sfeDLButton.h"
+#include "flxAppButton.h"
 
 #include <utility>
 
@@ -464,8 +464,9 @@ class flxApplication : public flxApplicationBase
     flxSysFirmware _sysUpdate;
 #endif
 
+    // TODO - define test this out
     // for our button events of the board
-    sfeDLButton _boardButton;
+    flxAppButton _boardButton;
 
     // For the sleep timer
     unsigned long _startTime = 0;

@@ -8,7 +8,7 @@
  *---------------------------------------------------------------------------------
  */
 
-#include "sfeDLButton.h"
+#include "flxAppButton.h"
 
 // ISR Callback - C space
 static void userButtonISRCallback(void *buttonObj)
@@ -17,16 +17,16 @@ static void userButtonISRCallback(void *buttonObj)
         return;
 
     // call back into object space
-    ((sfeDLButton *)buttonObj)->buttonISRCallback();
+    ((flxAppButton *)buttonObj)->buttonISRCallback();
 }
 //---------------------------------------------------------------------------
-void sfeDLButton::buttonISRCallback(void)
+void flxAppButton::buttonISRCallback(void)
 {
     if (_theButtonPin != kNoButton)
         _currentEvent = digitalRead(_theButtonPin) == HIGH ? kEventButtonRelease : kEventButtonPress;
 }
 //---------------------------------------------------------------------------
-bool sfeDLButton::setupButton(uint8_t theButton)
+bool flxAppButton::setupButton(uint8_t theButton)
 {
     // okay button value
     if (theButton == kNoButton)
@@ -43,7 +43,7 @@ bool sfeDLButton::setupButton(uint8_t theButton)
         if (_theButtonPin != kNoButton)
         {
             detachInterrupt(_theButtonPin);
-            _currentEvent = sfeDLButton::kEventNoEvent;
+            _currentEvent = flxAppButton::kEventNoEvent;
         }
     }
 
@@ -66,7 +66,7 @@ bool sfeDLButton::setupButton(uint8_t theButton)
 }
 //---------------------------------------------------------------------------
 
-bool sfeDLButton::initialize(void)
+bool flxAppButton::initialize(void)
 {
     // has the button pin set?
     if (!setupButton(_theButtonPin))
@@ -74,7 +74,7 @@ bool sfeDLButton::initialize(void)
 
     _currentEvent = kEventNoEvent;
     // job/timer for when we should check button state
-    _jobCheckButton.setup("buttoncheck", 300, this, &sfeDLButton::checkButton);
+    _jobCheckButton.setup("buttoncheck", 300, this, &flxAppButton::checkButton);
     flxAddJobToQueue(_jobCheckButton);
 
     _isInitialized = true;
@@ -83,7 +83,7 @@ bool sfeDLButton::initialize(void)
 }
 
 //---------------------------------------------------------------------------
-void sfeDLButton::setButtonPin(uint8_t theButton)
+void flxAppButton::setButtonPin(uint8_t theButton)
 {
     if (_isInitialized)
         setupButton(theButton);
@@ -92,14 +92,13 @@ void sfeDLButton::setButtonPin(uint8_t theButton)
 }
 //---------------------------------------------------------------------------
 
-void sfeDLButton::checkButton(void)
+void flxAppButton::checkButton(void)
 {
     // Button event / state change?
-    if (_currentEvent != sfeDLButton::kEventNoEvent)
+    if (_currentEvent != flxAppButton::kEventNoEvent)
     {
-        if (_currentEvent == sfeDLButton::kEventButtonPress)
+        if (_currentEvent == flxAppButton::kEventButtonPress)
         {
-            flxLog_I("button press");
             _currentInc = 0;
             _incEventTime = millis();
             _pressEventTime = _incEventTime;
@@ -110,7 +109,6 @@ void sfeDLButton::checkButton(void)
         }
         else
         {
-            flxLog_I("button release");
             _userButtonPressed = false;
             if (millis() - _pressEventTime < 1001)
                 on_momentaryPress.emit();

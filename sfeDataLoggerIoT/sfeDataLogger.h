@@ -17,7 +17,6 @@
 #include <Flux.h>
 
 #include "flxApplication.h"
-#include "sfeDLButton.h"
 
 /////////////////////////////////////////////////////////////////////////
 // Define our application class for the data logger

@@ -19,11 +19,11 @@
 // Note: For button press events, the class will send out "increment" events if the button is pressed for a
 // longer that "momentary" period
 
-class sfeDLButton : public flxActionType<sfeDLButton>
+class flxAppButton : public flxActionType<flxAppButton>
 {
 
   public:
-    sfeDLButton()
+    flxAppButton()
         : _theButtonPin{kNoButton}, _pressIncrement{5}, _userButtonPressed{false}, _pressEventTime{0}, _currentInc{0},
           _isInitialized{false}, _currentEvent{kEventNoEvent}
     {

@@ -13,79 +13,86 @@
 
 #include <Flux/flxCoreLog.h>
 #include <Flux/flxCoreParam.h>
+#include <Flux/flxPlatform.h>
 #include <Flux/flxUtils.h>
 
-class sfeDLSystemOp : public flxOperation
+class flxAppSystemInfo : public flxOperation
 {
   private:
+#if defined(CONFIG_FLUX_WIFI)
     std::string get_wifi_ssid(void)
     {
         std::string sTmp;
 
-        if (_pDataLogger && _pDataLogger->_wifiConnection.enabled())
-            sTmp = _pDataLogger->_wifiConnection.connectedSSID().c_str();
+        if (_pApplication && _pApplication->_wifiConnection.enabled())
+            sTmp = _pApplication->_wifiConnection.connectedSSID().c_str();
 
         return sTmp;
     }
 
     uint8_t get_wifi_rssi(void)
     {
-        if (!_pDataLogger || !_pDataLogger->_wifiConnection.enabled())
+        if (!_pApplication || !_pApplication->_wifiConnection.enabled())
             return 0;
 
-        return _pDataLogger->_wifiConnection.RSSI();
+        return _pApplication->_wifiConnection.RSSI();
     }
-
+#endif
     uint32_t get_uptime(void)
     {
         return millis();
     }
 
-    // uint32_t get_sdfree(void)
-    // {
-    //     if (!_pDataLogger || !_pDataLogger->_theSDCard.enabled())
-    //         return 0;
+#if defined(CONFIG_FLUX_SDMMCARD)
+    uint32_t get_sdfree(void)
+    {
+        if (!_pApplication || !_pApplication->_theSDCard.enabled())
+            return 0;
 
-    //     return _pDataLogger->_theSDCard.total() - _pDataLogger->_theSDCard.used();
-    // }
-
+        return _pApplication->_theSDCard.total() - _pApplication->_theSDCard.used();
+    }
+#endif
     uint32_t get_heap(void)
     {
-        return ESP.getFreeHeap();
+        return flxPlatform::heap_free();
     }
 
   public:
-    sfeDLSystemOp() : _pDataLogger{nullptr}
+    flxAppSystemInfo() : _pApplication{nullptr}
     {
         setName("System Info", "Operating information for the DataLogger");
 
+#if defined(CONFIG_FLUX_WIFI)
         flxRegister(wifiSSID, "SSID", "Current WiFi SSID");
         flxRegister(wifiRSSI, "RSSI", "Current WiFi RSSI");
+#endif
         flxRegister(systemUptime, "Uptime", "System Uptime in MS");
         flxRegister(systemHeap, "Heap", "Heap free size");
-        // flxRegister(systemSDFree, "SD Free", "SD Card free space");
+#if defined(CONFIG_FLUX_SDMMCARD)
+        flxRegister(systemSDFree, "SD Free", "SD Card free space");
+#endif
     }
 
-    sfeDLSystemOp(flxApplication *dlApp) : sfeDLSystemOp()
+    flxAppSystemInfo(flxApplication *dlApp) : flxAppSystemInfo()
     {
         setDataLogger(dlApp);
     }
 
     void setDataLogger(flxApplication *dlApp)
     {
-        _pDataLogger = dlApp;
+        _pApplication = dlApp;
     }
 
-    flxParameterOutString<sfeDLSystemOp, &sfeDLSystemOp::get_wifi_ssid> wifiSSID;
+    flxParameterOutString<flxAppSystemInfo, &flxAppSystemInfo::get_wifi_ssid> wifiSSID;
 
-    flxParameterOutUInt8<sfeDLSystemOp, &sfeDLSystemOp::get_wifi_rssi> wifiRSSI;
+    flxParameterOutUInt8<flxAppSystemInfo, &flxAppSystemInfo::get_wifi_rssi> wifiRSSI;
 
-    flxParameterOutUInt32<sfeDLSystemOp, &sfeDLSystemOp::get_uptime> systemUptime;
+    flxParameterOutUInt32<flxAppSystemInfo, &flxAppSystemInfo::get_uptime> systemUptime;
 
-    // flxParameterOutUInt32<sfeDLSystemOp, &sfeDLSystemOp::get_sdfree> systemSDFree;
+    // flxParameterOutUInt32<flxAppSystemInfo, &flxAppSystemInfo::get_sdfree> systemSDFree;
 
-    flxParameterOutUInt32<sfeDLSystemOp, &sfeDLSystemOp::get_heap> systemHeap;
+    flxParameterOutUInt32<flxAppSystemInfo, &flxAppSystemInfo::get_heap> systemHeap;
 
   private:
-    flxApplication *_pDataLogger;
+    flxApplication *_pApplication;
 };

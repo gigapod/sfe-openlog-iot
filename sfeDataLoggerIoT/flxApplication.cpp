@@ -589,6 +589,11 @@ void flxApplication::sysInit(void)
     //     flux.insert_after(&flxSettings, &flxClock);
     // #endif
 
+    // button
+#if defined(FLUX_BOARD_APP_BUTTON)
+    _boardButton.setButtonPin(FLUX_BOARD_APP_BUTTON);
+#endif
+
     flxApplicationBase::sysInit();
 }
 

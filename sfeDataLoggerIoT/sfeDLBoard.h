@@ -17,6 +17,8 @@
 // Das Boot button
 const uint8_t kDLBoardBootButton = 0;
 
+#define FLUX_BOARD_APP_BUTTON 0
+
 // 3v3 pin
 const uint8_t kDLBoardEn3v3_SW = 32;
 

@@ -106,6 +106,8 @@
 #include <Flux/flxSysFirmware.h>
 #endif
 
+#include "sfeDLBoard.h"
+
 #include "sfeDLButton.h"
 
 #include <utility>
@@ -467,8 +469,6 @@ class flxApplication : public flxApplicationBase
 
     // For the sleep timer
     unsigned long _startTime = 0;
-
-    bool _isValidMode;
 
     uint32_t _modeFlags;
     uint32_t _opFlags;

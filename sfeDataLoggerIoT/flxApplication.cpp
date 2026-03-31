@@ -17,7 +17,7 @@
 #include "sfeDLCommands.h"
 #include "sfeDLLed.h"
 // #include "sfeDLMode.h"
-#include "sfeDLSystemOp.h"
+#include "flxAppSystemInfo.h"
 #include "sfeDLVersion.h"
 
 #include "esp_sleep.h"

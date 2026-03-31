@@ -152,7 +152,7 @@ const uint32_t kStartupMenuDefaultDelaySecs = 2;
 #define clearOpMode(__mode__) _opFlags &= ~__mode__
 //
 // forward declare of our system info class
-class sfeDLSystemOp;
+class flxAppSystemInfo;
 // flxApplication
 //-------------------------------------------------------------------------
 // Define our application class the config based application
@@ -195,7 +195,7 @@ class flxApplication : public flxApplicationBase
 
   private:
     friend class sfeDLCommands;
-    friend class sfeDLSystemOp;
+    friend class flxAppSystemInfo;
 
     //------------------------------------------
     // For controlling the log output types
@@ -480,5 +480,5 @@ class flxApplication : public flxApplicationBase
     // log sys info
 
     bool _bLogSysInfo;
-    sfeDLSystemOp *_pSystemInfo;
+    flxAppSystemInfo *_pSystemInfo;
 };

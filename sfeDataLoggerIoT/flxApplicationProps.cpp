@@ -13,9 +13,9 @@
  *
  */
 
+#include "flxAppSystemInfo.h"
 #include "flxApplication.h"
 #include "sfeDLLed.h"
-#include "sfeDLSystemOp.h"
 #include "sfeDLVersion.h"
 #include <Flux/flxSerial.h>
 
@@ -214,7 +214,7 @@ void flxApplication::set_logsysinfo(bool bEnableSysLog)
     // Have we created an log object yet?
     if (!_pSystemInfo)
     {
-        _pSystemInfo = new sfeDLSystemOp(this);
+        _pSystemInfo = new flxAppSystemInfo(this);
         if (!_pSystemInfo)
         {
             flxLogM_E(kMsgErrAllocError, "System Info Operator");

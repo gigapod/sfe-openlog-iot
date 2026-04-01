@@ -29,12 +29,16 @@ class flxAppLEDRGB : public flxAppLEDBase
 
         _blinkOn = !_blinkOn;
     }
+
+    //------------------------------------------------------------------------------------
     void onUpdate(ledState_t &theState)
     {
 
         _theLED = currentState().color;
         FastLED.show();
     }
+
+    //------------------------------------------------------------------------------------
     bool onInitialize(uint8_t thePin)
     {
         // Begin setup - turn on board LED during setup.

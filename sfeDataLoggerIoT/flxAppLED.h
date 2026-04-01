@@ -24,13 +24,13 @@ class flxAppLED : public flxAppLEDBase
 
         digitalWrite(_thePin, _blinkOn ? HIGH : LOW);
     }
-
+    //------------------------------------------------------------------------------------
     void onUpdate(ledState_t &theState)
     {
         // black means off - everything else is on!
         digitalWrite(_thePin, currentState().color == flxAppLEDBase::Black ? LOW : HIGH);
     }
-
+    //------------------------------------------------------------------------------------
     bool onInitialize(uint8_t thePin)
     {
         // Begin setup - turn on board LED during setup.

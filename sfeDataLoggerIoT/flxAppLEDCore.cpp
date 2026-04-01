@@ -12,7 +12,7 @@
 
 #include "Arduino.h"
 
-#include "flxappLEDCore.h"
+#include "flxAppLEDCore.h"
 
 // task handle
 static TaskHandle_t hTaskLED = NULL;
@@ -32,10 +32,10 @@ const uint16_t kLEDCmdQueueWait = 5;
 // Callback for the FreeRTOS timer -- used to blink LED
 // static method
 
-void flxAppLEDCore::rtosTimerCallback(xTimerHandle pxTimer)
+void flxAppLEDBase::rtosTimerCallback(xTimerHandle pxTimer)
 {
     // get the user data from the timer - the object to call
-    flxAppLEDCore *pLED = static_cast<flxAppLEDCore *>(pvTimerGetTimerID(pxTimer));
+    flxAppLEDBase *pLED = static_cast<flxAppLEDBase *>(pvTimerGetTimerID(pxTimer));
     if (pLED)
         pLED->onTimer();
 }
@@ -43,7 +43,7 @@ void flxAppLEDCore::rtosTimerCallback(xTimerHandle pxTimer)
 //--------------------------------------------------------------------------------
 // task event loop - standard C static method - for FreeRTOS
 // static method
-void flxAppLEDCore::rtosTaskProcessing(void *parameter)
+void flxAppLEDBase::rtosTaskProcessing(void *parameter)
 {
 
     if (hCmdQueue == NULL)
@@ -81,7 +81,7 @@ void flxAppLEDCore::rtosTaskProcessing(void *parameter)
 }
 
 // static method
-bool flxAppLEDCore::rtosSetup(void)
+bool flxAppLEDBase::rtosSetup(void)
 {
     // already setup?
     if (hTaskLED != NULL)
@@ -97,7 +97,7 @@ bool flxAppLEDCore::rtosSetup(void)
     }
 
     // Event processing task
-    BaseType_t xReturnValue = xTaskCreate(&flxAppLEDCore::rtosTaskProcessing, // Event processing task function
+    BaseType_t xReturnValue = xTaskCreate(&flxAppLEDBase::rtosTaskProcessing, // Event processing task function
                                           "LEDEventProc",                     // String with name of task.
                                           kStackSize,                         // Stack size in 32 bit words.
                                           NULL,                               // Parameter passed as input of the task
@@ -120,13 +120,13 @@ bool flxAppLEDCore::rtosSetup(void)
 // _sfeLED implementation
 //---------------------------------------------------------
 
-flxAppLEDCore::flxAppLEDCore() : _current{0}, _isInitialized{false}, _blinkOn{false}, _disabled{false}
+flxAppLEDBase::flxAppLEDBase() : _current{0}, _isInitialized{false}, _blinkOn{false}, _disabled{false}
 {
-    _ledStack[0] = {flxAppLEDCore::Black, 0};
+    _ledStack[0] = {flxAppLEDBase::Black, 0};
 }
 
 //---------------------------------------------------------
-bool flxAppLEDCore::initialize(uint8_t pin)
+bool flxAppLEDBase::initialize(uint8_t pin)
 {
 
     // rtos this setup?
@@ -136,7 +136,7 @@ bool flxAppLEDCore::initialize(uint8_t pin)
     }
     // Create a timer, which is used to drive the user experience.
     _hTimer = xTimerCreate("ledtimer", kTimerPeriod / portTICK_RATE_MS, pdTRUE, static_cast<void *>(this),
-                           &flxAppLEDCore::rtosTimerCallback);
+                           &flxAppLEDBase::rtosTimerCallback);
     if (_hTimer == NULL)
     {
         // no timer - whoa
@@ -160,7 +160,7 @@ bool flxAppLEDCore::initialize(uint8_t pin)
 //---------------------------------------------------------
 // Command "event" callback -
 
-void flxAppLEDCore::onEvent(cmdStruct_t &theCommand)
+void flxAppLEDBase::onEvent(cmdStruct_t &theCommand)
 {
     switch (theCommand.type)
     {
@@ -209,7 +209,7 @@ void flxAppLEDCore::onEvent(cmdStruct_t &theCommand)
 //---------------------------------------------------------
 // Update the LED UX to reflect current state in stack
 
-void flxAppLEDCore::update(void)
+void flxAppLEDBase::update(void)
 {
     if (!_isInitialized)
         return;
@@ -228,7 +228,7 @@ void flxAppLEDCore::update(void)
 }
 
 //---------------------------------------------------------
-void flxAppLEDCore::popState(void)
+void flxAppLEDBase::popState(void)
 {
     if (_current > 0)
     {
@@ -237,7 +237,7 @@ void flxAppLEDCore::popState(void)
     }
 }
 //---------------------------------------------------------
-bool flxAppLEDCore::pushState(ledState_t &newState)
+bool flxAppLEDBase::pushState(ledState_t &newState)
 {
 
     if (_current > kStackSize - 2)
@@ -254,7 +254,7 @@ bool flxAppLEDCore::pushState(ledState_t &newState)
 //---------------------------------------------------------
 // queue up a command
 
-void flxAppLEDCore::queueCommand(cmdType_t command, LEDColor_t color, uint32_t ticks)
+void flxAppLEDBase::queueCommand(cmdType_t command, LEDColor_t color, uint32_t ticks)
 {
 
     if (!_isInitialized)
@@ -271,7 +271,7 @@ void flxAppLEDCore::queueCommand(cmdType_t command, LEDColor_t color, uint32_t t
 //---------------------------------------------------------
 // Flash the  LED
 
-void flxAppLEDCore::flash(LEDColor_t color)
+void flxAppLEDBase::flash(LEDColor_t color)
 {
     if (_disabled)
         return;
@@ -282,7 +282,7 @@ void flxAppLEDCore::flash(LEDColor_t color)
 //---------------------------------------------------------
 // LED Off - end current state
 
-void flxAppLEDCore::off(void)
+void flxAppLEDBase::off(void)
 {
     if (_disabled)
         return;
@@ -293,7 +293,7 @@ void flxAppLEDCore::off(void)
 //---------------------------------------------------------
 // LED on - new state
 
-void flxAppLEDCore::on(LEDColor_t color)
+void flxAppLEDBase::on(LEDColor_t color)
 {
     if (_disabled)
         return;
@@ -304,7 +304,7 @@ void flxAppLEDCore::on(LEDColor_t color)
 //---------------------------------------------------------
 // Blink - change the timer value of the current color
 
-void flxAppLEDCore::blink(uint32_t timeout)
+void flxAppLEDBase::blink(uint32_t timeout)
 {
     if (_disabled)
         return;
@@ -315,7 +315,7 @@ void flxAppLEDCore::blink(uint32_t timeout)
 //---------------------------------------------------------
 // Blink - change state, start blinking
 
-void flxAppLEDCore::blink(LEDColor_t color, uint32_t timeout)
+void flxAppLEDBase::blink(LEDColor_t color, uint32_t timeout)
 {
     if (_disabled)
         return;
@@ -323,7 +323,7 @@ void flxAppLEDCore::blink(LEDColor_t color, uint32_t timeout)
     queueCommand(kCmdOn, color, timeout);
 }
 //---------------------------------------------------------
-void flxAppLEDCore::stop(bool turnoff)
+void flxAppLEDBase::stop(bool turnoff)
 {
     if (_disabled)
         return;
@@ -332,7 +332,7 @@ void flxAppLEDCore::stop(bool turnoff)
 }
 //---------------------------------------------------------
 // refresh
-void flxAppLEDCore::refresh(void)
+void flxAppLEDBase::refresh(void)
 {
     if (_disabled)
         return;
@@ -342,7 +342,7 @@ void flxAppLEDCore::refresh(void)
 
 //---------------------------------------------------------
 // Enable/Disable?
-void flxAppLEDCore::setDisabled(bool bDisable)
+void flxAppLEDBase::setDisabled(bool bDisable)
 {
 
     if (bDisable == _disabled)

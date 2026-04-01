@@ -18,10 +18,10 @@
 #pragma once
 
 //---------------------------------------------------------------
-class flxAppLEDCore
+class flxAppLEDBase
 {
   public:
-    flxAppLEDCore();
+    flxAppLEDBase();
 
     // TODO
     // Could maybe do this in a sub-class, but I'm lazy, and will need
@@ -89,8 +89,13 @@ class flxAppLEDCore
     {
         cmdType_t type;
         ledState_t data;
-        flxAppLEDCore *led;
+        flxAppLEDBase *led;
     } cmdStruct_t;
+
+    ledState_t currentState(void)
+    {
+        return _ledStack[_current];
+    }
     // methods the sub-class  implements
     virtual void onTimer(void) = 0;
     virtual void onUpdate(ledState_t &) = 0;

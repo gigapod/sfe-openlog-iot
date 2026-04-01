@@ -2,50 +2,44 @@
 /*
  *---------------------------------------------------------------------------------
  *
- * Copyright (c) 2022-2026, SparkFun Electronics Inc.
+ * Copyright (c) 2022-2024, SparkFun Electronics Inc.
  *
  * SPDX-License-Identifier: MIT
  *
  *---------------------------------------------------------------------------------
  */
 
+// LED Display for the datalogger - led display in a task
 #pragma once
-
-// quiet a damn pragma message - silly
-#define FASTLED_INTERNAL
-#include <FastLED.h>
 
 #include <flxAppLEDCore.h>
 //---------------------------------------------------------------
-class flxAppLEDRGB : public flxAppLEDBase
+class flxAppLED : public flxAppLEDBase
 {
   protected:
-    static constexpr const uint8_t kLEDDefaultBrightness = 20;
-
     void onTimer(void)
     {
-        _theLED = _blinkOn ? flxAppLEDBase::Black : currentState().color;
-        FastLED.show();
-
+        // toggle blink
         _blinkOn = !_blinkOn;
+
+        digitalWrite(_thePin, _blinkOn ? HIGH : LOW);
     }
+
     void onUpdate(ledState_t &theState)
     {
-
-        _theLED = currentState().color;
-        FastLED.show();
+        // black means off - everything else is on!
+        digitalWrite(_thePin, currentState().color == flxAppLEDBase::Black ? LOW : HIGH);
     }
+
     bool onInitialize(uint8_t thePin)
     {
         // Begin setup - turn on board LED during setup.
         pinMode(thePin, OUTPUT);
-
-        FastLED.addLeds<WS2812, thePin, GRB>(&_theLED, 1).setCorrection(TypicalLEDStrip);
-        FastLED.setBrightness(kLEDDefaultBrightness);
+        _thePin = thePin;
 
         return true;
     }
 
   private:
-    CRGB _theLED;
+    uint8_t _thePin;
 };

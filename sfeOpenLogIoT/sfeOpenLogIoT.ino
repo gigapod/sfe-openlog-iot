@@ -9,16 +9,16 @@
  */
 
 /*
- * Flux Framework based logger.
+ * Firmware for the OpenLog IoT - Arduino Entry
  *
  */
 
 // Flux framework
 #include "sfeDLBoard.h"
-#include "sfeDataLogger.h"
+#include "sfeOpenLogIoT.h"
 
 // Our data logger application
-sfeDataLogger theOpenLogIoT;
+sfeOpenLogIoT theOpenLogIoT;
 
 //---------------------------------------------------------------------
 // Arduino Setup

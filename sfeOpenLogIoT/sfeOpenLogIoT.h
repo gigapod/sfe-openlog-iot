@@ -9,7 +9,7 @@
  */
 
 /*
- * SparkFun Foundation App - logger
+ * SparkFun OpenLog IoT
  *
  */
 #pragma once
@@ -21,14 +21,14 @@
 /////////////////////////////////////////////////////////////////////////
 // Define our application class for the data logger
 /////////////////////////////////////////////////////////////////////////
-class sfeDataLogger : public flxApplication
+class sfeOpenLogIoT : public flxApplication
 {
   public:
     //---------------------------------------------------------------------------
     // Constructor
     //
 
-    sfeDataLogger();
+    sfeOpenLogIoT();
 
     //---------------------------------------------------------------------------
     // onSetup()

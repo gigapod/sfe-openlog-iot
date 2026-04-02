@@ -1,7 +1,7 @@
 /*
  *---------------------------------------------------------------------------------
  *
- * Copyright (c) 2022-2024, SparkFun Electronics Inc.
+ * Copyright (c) 2022-2026, SparkFun Electronics Inc.
  *
  * SPDX-License-Identifier: MIT
  *
@@ -9,18 +9,18 @@
  */
 
 /*
- * SparkFun Data Logger
+ * SparkFun OpenLog IoT
  *
  */
 
-#include "sfeDataLogger.h"
+#include "sfeOpenLogIoT.h"
 
 //---------------------------------------------------------------------------
 // Constructor
 //---------------------------------------------------------------------------
 //
 
-sfeDataLogger::sfeDataLogger()
+sfeOpenLogIoT::sfeOpenLogIoT()
 {
 }
 
@@ -30,7 +30,7 @@ sfeDataLogger::sfeDataLogger()
 // onSetup()
 //
 // Called by the system before devices are loaded, and system initialized
-bool sfeDataLogger::onSetup()
+bool sfeOpenLogIoT::onSetup()
 {
     setName("SparkFun OpenLog IoT");
     setDescription("(c) 2023-2026 SparkFun Electronics");
@@ -46,7 +46,7 @@ bool sfeDataLogger::onSetup()
 //
 // Called after qwiic/i2c auto-load, but before system state restore
 
-void sfeDataLogger::onDeviceLoad()
+void sfeOpenLogIoT::onDeviceLoad()
 {
 
     flxLog_I("user - onDeviceLoad");
@@ -56,7 +56,7 @@ void sfeDataLogger::onDeviceLoad()
 //
 // Called just before settings are restored on startup.
 
-void sfeDataLogger::onRestore(void)
+void sfeOpenLogIoT::onRestore(void)
 {
 
     flxLog_I("user - onRestore");
@@ -71,7 +71,7 @@ void sfeDataLogger::onRestore(void)
     //
     // Called before the system/framework is up
 }
-void sfeDataLogger::onInit(void)
+void sfeOpenLogIoT::onInit(void)
 {
     flxLog_I("user - onInit");
 }
@@ -83,7 +83,7 @@ void sfeDataLogger::onInit(void)
 // onStart()
 //
 // Called after the system is loaded, restored and initialized
-bool sfeDataLogger::onStart()
+bool sfeOpenLogIoT::onStart()
 {
     flxLog_I("user - onStart");
 

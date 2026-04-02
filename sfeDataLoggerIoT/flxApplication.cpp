@@ -14,10 +14,9 @@
  */
 
 #include "flxApplication.h"
+#include "flxAppSystemInfo.h"
 #include "sfeDLCommands.h"
 #include "sfeDLLed.h"
-// #include "sfeDLMode.h"
-#include "flxAppSystemInfo.h"
 #include "sfeDLVersion.h"
 
 #include "esp_sleep.h"

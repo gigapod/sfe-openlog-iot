@@ -24,7 +24,7 @@ class flxAppLEDRGB : public flxAppLEDBase
 
     void onTimer(void)
     {
-        _theLED = _blinkOn ? flxAppLEDBase::Black : currentState().color;
+        _theLED = _blinkOn ? flxColor::Black : currentState().color;
         FastLED.show();
 
         _blinkOn = !_blinkOn;

@@ -106,6 +106,14 @@
 #include <Flux/flxSysFirmware.h>
 #endif
 
+// TODO begin <<
+// TODO   - LED -- need to enable the proper defines once in SDK
+#define CONFIG_FLUX_APP_LED
+#if defined(CONFIG_FLUX_APP_LED)
+#include "flxAppLED.h"
+#endif
+// TODO >>
+
 #include "sfeDLBoard.h"
 
 #include "flxAppButton.h"
@@ -268,7 +276,7 @@ class flxApplication : public flxApplicationBase
   public:
     //---------------------------------------------------------------------------
 
-    // sysyInit()
+    // sysInit()
     //
     // Called before anything is started
     void sysInit() final;

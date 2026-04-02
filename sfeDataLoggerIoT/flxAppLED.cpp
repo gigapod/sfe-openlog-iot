@@ -12,7 +12,7 @@
 
 #include "Arduino.h"
 
-#include "flxAppLEDCore.h"
+#include "flxAppLED.h"
 
 // task handle
 static TaskHandle_t hTaskLED = NULL;
@@ -122,7 +122,7 @@ bool flxAppLEDBase::rtosSetup(void)
 
 flxAppLEDBase::flxAppLEDBase() : _current{0}, _isInitialized{false}, _blinkOn{false}, _disabled{false}
 {
-    _ledStack[0] = {flxAppLEDBase::Black, 0};
+    _ledStack[0] = {flxColor::Black, 0};
 }
 
 //---------------------------------------------------------
@@ -254,7 +254,7 @@ bool flxAppLEDBase::pushState(ledState_t &newState)
 //---------------------------------------------------------
 // queue up a command
 
-void flxAppLEDBase::queueCommand(cmdType_t command, LEDColor_t color, uint32_t ticks)
+void flxAppLEDBase::queueCommand(cmdType_t command, flxColor::color color, uint32_t ticks)
 {
 
     if (!_isInitialized)
@@ -271,7 +271,7 @@ void flxAppLEDBase::queueCommand(cmdType_t command, LEDColor_t color, uint32_t t
 //---------------------------------------------------------
 // Flash the  LED
 
-void flxAppLEDBase::flash(LEDColor_t color)
+void flxAppLEDBase::flash(flxColor::color color)
 {
     if (_disabled)
         return;
@@ -293,7 +293,7 @@ void flxAppLEDBase::off(void)
 //---------------------------------------------------------
 // LED on - new state
 
-void flxAppLEDBase::on(LEDColor_t color)
+void flxAppLEDBase::on(flxColor::color color)
 {
     if (_disabled)
         return;
@@ -315,7 +315,7 @@ void flxAppLEDBase::blink(uint32_t timeout)
 //---------------------------------------------------------
 // Blink - change state, start blinking
 
-void flxAppLEDBase::blink(LEDColor_t color, uint32_t timeout)
+void flxAppLEDBase::blink(flxColor::color color, uint32_t timeout)
 {
     if (_disabled)
         return;

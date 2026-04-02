@@ -38,8 +38,10 @@ flux_sdk_add_module(
     flux_ntp
     flux_firmware
     opt_enable_device
-    opt_extserial
-    opt_extinterrupt  )
+    flux_application
+    flux_app_led
+    flux_app_button
+    flux_app_commands )
 
 # now call the init function/macro - this will build the Arduino Library SparkFun_Flux under this
 # main directory

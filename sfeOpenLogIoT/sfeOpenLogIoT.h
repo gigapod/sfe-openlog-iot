@@ -16,7 +16,7 @@
 
 #include <Flux.h>
 
-#include "flxApplication.h"
+#include "<Flux/flxApplication.h>"
 
 /////////////////////////////////////////////////////////////////////////
 // Define our application class for the data logger

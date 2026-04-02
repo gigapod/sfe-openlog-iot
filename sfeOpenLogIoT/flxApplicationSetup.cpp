@@ -14,7 +14,6 @@
  *
  */
 #include "flxApplication.h"
-#include "sfeDLBoard.h"
 
 #include <Flux/flxDevSerial.h>
 

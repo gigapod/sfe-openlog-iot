@@ -114,7 +114,8 @@
 #endif
 // TODO >>
 
-#include "sfeDLBoard.h"
+// the board definitions
+#include "flux_board_config.h"
 
 #include "flxAppButton.h"
 

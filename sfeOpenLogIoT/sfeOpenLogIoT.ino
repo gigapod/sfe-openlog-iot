@@ -14,7 +14,6 @@
  */
 
 // Flux framework
-#include "sfeDLBoard.h"
 #include "sfeOpenLogIoT.h"
 
 // Our data logger application
@@ -25,9 +24,6 @@ sfeOpenLogIoT theOpenLogIoT;
 //
 void setup()
 {
-
-    pinMode(kDLBoardEn3v3_SW, OUTPUT); // Enable Qwiic power and I2C
-    digitalWrite(kDLBoardEn3v3_SW, HIGH);
 
     // Start up the framework
     flux.start();

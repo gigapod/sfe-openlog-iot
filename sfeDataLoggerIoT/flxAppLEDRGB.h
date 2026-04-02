@@ -15,7 +15,7 @@
 #define FASTLED_INTERNAL
 #include <FastLED.h>
 
-#include <flxAppLEDCore.h>
+#include <flxAppLED.h>
 //---------------------------------------------------------------
 class flxAppLEDRGB : public flxAppLEDBase
 {

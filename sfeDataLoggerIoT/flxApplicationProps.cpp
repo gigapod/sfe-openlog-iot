@@ -15,7 +15,6 @@
 
 #include "flxAppSystemInfo.h"
 #include "flxApplication.h"
-#include "sfeDLLed.h"
 #include "sfeDLVersion.h"
 #include <Flux/flxSerial.h>
 
@@ -110,16 +109,17 @@ void flxApplication::set_sleepWakePeriod(uint32_t period)
 //---------------------------------------------------------------------------
 // LED
 //---------------------------------------------------------------------------
+#if defined(CONFIG_FLUX_APP_LED)
 bool flxApplication::get_ledEnabled(void)
 {
-    return !sfeLED.disabled();
+    return !theLED.disabled();
 }
 //---------------------------------------------------------------------------
 void flxApplication::set_ledEnabled(bool enabled)
 {
-    sfeLED.setDisabled(!enabled);
+    theLED.setDisabled(!enabled);
 }
-
+#endif
 //---------------------------------------------------------------------------
 // Terminal Baudrate things
 //---------------------------------------------------------------------------

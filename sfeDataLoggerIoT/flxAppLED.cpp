@@ -8,7 +8,6 @@
  *
  *---------------------------------------------------------------------------------
  */
-// Implements onboard LED updates in an ESP32 task
 
 #include "Arduino.h"
 
@@ -62,7 +61,6 @@ void flxAppLEDBase::rtosTaskProcessing(void *parameter)
 
         // Flash commands can be compressed - skip dups in queue - if the next command is flash and this
         // command is flash, and the LED is the same skip it.
-
         if (theCommand.type == kCmdFlash)
         {
             cmdStruct_t thePeek;
@@ -74,6 +72,7 @@ void flxAppLEDBase::rtosTaskProcessing(void *parameter)
                     continue;
             }
         }
+
         // send the new command to the event processor -- in the object
         if (theCommand.led != NULL)
             theCommand.led->onEvent(theCommand);
@@ -117,7 +116,7 @@ bool flxAppLEDBase::rtosSetup(void)
     return true;
 }
 //---------------------------------------------------------
-// _sfeLED implementation
+// core LED implementation
 //---------------------------------------------------------
 
 flxAppLEDBase::flxAppLEDBase() : _current{0}, _isInitialized{false}, _blinkOn{false}, _disabled{false}
@@ -131,9 +130,8 @@ bool flxAppLEDBase::initialize(uint8_t pin)
 
     // rtos this setup?
     if (!rtosSetup())
-    {
         return false;
-    }
+
     // Create a timer, which is used to drive the user experience.
     _hTimer = xTimerCreate("ledtimer", kTimerPeriod / portTICK_RATE_MS, pdTRUE, static_cast<void *>(this),
                            &flxAppLEDBase::rtosTimerCallback);
@@ -143,6 +141,7 @@ bool flxAppLEDBase::initialize(uint8_t pin)
         Serial.println("[WARNING] - failed to create LED timer");
         return false;
     }
+
     // call the sub-classed method
     if (!this->onInitialize(pin))
     {

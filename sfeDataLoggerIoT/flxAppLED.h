@@ -35,7 +35,31 @@ class flxAppLEDBase
     void on(flxColor::color color);
     void off(void);
     void blink(uint32_t);
+    void blinkSlow(void)
+    {
+        blink(kLEDFlashSlow);
+    }
+    void blinkMedium(void)
+    {
+        blink(kLEDFlashMedium);
+    }
+    void blinkFast(void)
+    {
+        blink(kLEDFlashFast);
+    }
     void blink(flxColor::color, uint32_t);
+    void blinkSlow(flxColor::color color)
+    {
+        blink(color, kLEDFlashSlow);
+    }
+    void blinkMedium(flxColor::color color)
+    {
+        blink(color, kLEDFlashMedium);
+    }
+    void blinkFast(flxColor::color color)
+    {
+        blink(color, kLEDFlashFast);
+    }
     void stop(bool off = true);
     void flash(flxColor::color color);
     void refresh(void);
@@ -78,6 +102,11 @@ class flxAppLEDBase
     {
         return _ledStack[_current];
     }
+    flxColor::color currentColor(void)
+    {
+        return _ledStack[_current].color;
+    }
+
     // methods the sub-class  implements
     virtual void onTimer(void) = 0;
     virtual void onUpdate(ledState_t &) = 0;
@@ -129,7 +158,7 @@ class flxAppLED : public flxAppLEDBase
     void onUpdate(ledState_t &theState)
     {
         // black means off - everything else is on!
-        digitalWrite(_thePin, currentState().color == flxColor::Black ? LOW : HIGH);
+        digitalWrite(_thePin, currentColor() == flxColor::Black ? LOW : HIGH);
     }
     //------------------------------------------------------------------------------------
     bool onInitialize(uint8_t thePin)

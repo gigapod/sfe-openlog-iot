@@ -17,10 +17,8 @@
 #include "sfeDLBoard.h"
 #include "sfeDataLogger.h"
 
-#include "sfeDLLed.h"
-
 // Our data logger application
-sfeDataLogger theDataLogger;
+sfeDataLogger theOpenLogIoT;
 
 //---------------------------------------------------------------------
 // Arduino Setup
@@ -47,7 +45,7 @@ void loop()
     // the dispatch of processing to the components that were added
     // to the system during setup.
     if (flux.loop()) // will return true if an action did something
-        sfeLED.flash(sfeLED.Blue);
+        theOpenLogIoT.onSystemActivityLow();
 
     delay(1);
 }

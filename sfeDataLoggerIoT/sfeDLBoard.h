@@ -23,7 +23,8 @@ const uint8_t kDLBoardBootButton = 0;
 const uint8_t kDLBoardEn3v3_SW = 32;
 
 // LED Built in
-const uint8_t kDLBoardLEDBuiltin = 25;
+const uint8_t kDLBoardLEDBuiltin = 4;
+#define FLUX_BOARD_APP_LED 4
 
 // RGB LED
 const uint8_t kDLBoardLEDRGBBuiltin = 26;

@@ -16,7 +16,6 @@
 #include "flxApplication.h"
 #include "flxAppSystemInfo.h"
 #include "sfeDLCommands.h"
-#include "sfeDLLed.h"
 #include "sfeDLVersion.h"
 
 #include "esp_sleep.h"
@@ -83,7 +82,9 @@ flxApplication::flxApplication()
     // Add a title for this section - the application level  - of settings
     setTitle("General");
 
-    // flxRegister(ledEnabled, "LED Enabled", "Enable/Disable the on-board LED activity");
+#if defined(CONFIG_FLUX_APP_LED)
+    flxRegister(ledEnabled, "LED Enabled", "Enable/Disable the on-board LED activity");
+#endif
 
     // our the menu timeout property to our props/menu system entries
     addProperty(_serialSettings.menuTimeout);
@@ -156,10 +157,12 @@ flxApplication::flxApplication()
 //---------------------------------------------------------------------------
 void flxApplication::onFirmwareLoad(bool bLoading)
 {
+#if defined(CONFIG_FLUX_APP_LED)
     if (bLoading)
-        sfeLED.on(sfeLED.Yellow);
+        theLED.on(flxColor::Yellow);
     else
-        sfeLED.off();
+        theLED.off();
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -167,11 +170,13 @@ void flxApplication::onFirmwareLoad(bool bLoading)
 //---------------------------------------------------------------------------
 void flxApplication::onErrorMessage(uint8_t msgType)
 {
+#if defined(CONFIG_FLUX_APP_LED)
     // send an LED thing
     if (msgType == (uint8_t)flxLogError)
-        sfeLED.flash(sfeLED.Red);
+        theLED.flash(flxColor::Red);
     else if (msgType == (uint8_t)flxLogWarning)
-        sfeLED.flash(sfeLED.Yellow);
+        theLED.flash(flxColor::Yellow);
+#endif
 }
 
 #if defined(CONFIG_FLUX_PREFS_SERIAL)
@@ -184,11 +189,15 @@ void flxApplication::onSettingsEdit(bool bLoading)
     if (bLoading)
     {
         setOpMode(kFlxApplicationOpEditing);
-        // sfeLED.on(sfeLED.LightGray);
+#if defined(CONFIG_FLUX_APP_LED)
+        theLED.on(flxColor::LightGray);
+#endif
     }
     else
     {
-        // sfeLED.off();
+#if defined(CONFIG_FLUX_APP_LED)
+        theLED.off();
+#endif
 
         // no longer editing
         clearOpMode(kFlxApplicationOpEditing);
@@ -209,13 +218,17 @@ void flxApplication::onSettingsEdit(bool bLoading)
 //---------------------------------------------------------------------------
 void flxApplication::onSystemActivity(void)
 {
-    // sfeLED.flash(sfeLED.Gray);
+#if defined(CONFIG_FLUX_APP_LED)
+    theLED.flash(flxColor::Gray);
+#endif
 }
 
 //---------------------------------------------------------------------------
 void flxApplication::onSystemActivityLow(void)
 {
-    // sfeLED.flash(sfeLED.Blue);
+#if defined(CONFIG_FLUX_APP_LED)
+    theLED.flash(flxColor::Blue);
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -227,34 +240,42 @@ void flxApplication::onButtonPressed(uint32_t increment)
 {
 
     // we need LED on for visual feedback...
-    sfeLED.setDisabled(false);
+    theLED.setDisabled(false);
 
-    // if (increment == 1)
-    //     sfeLED.blink(sfeLED.Yellow, kLEDFlashSlow);
+    if (increment == 1)
+#if defined(CONFIG_FLUX_APP_LED)
+        theLED.blinkSlow(flxColor::Yellow);
+#endif
+    else if (increment == 2)
+#if defined(CONFIG_FLUX_APP_LED)
+        theLED.blinkMedium(flxColor::Green);
+#endif
+    else if (increment == 3)
+#if defined(CONFIG_FLUX_APP_LED)
+        theLED.blinkFast(flxColor::Blue);
+#endif
 
-    // else if (increment == 2)
-    //     sfeLED.blink(kLEDFlashMedium);
+    else if (increment >= 4)
+    {
+#if defined(CONFIG_FLUX_APP_LED)
+        theLED.stop();
 
-    // else if (increment == 3)
-    //     sfeLED.blink(kLEDFlashFast);
+        theLED.on(flxColor::Red);
+        delay(500);
+        theLED.off();
+#endif
 
-    // else if (increment >= 4)
-    // {
-    // sfeLED.stop();
-
-    // sfeLED.on(sfeLED.Red);
-    // delay(500);
-    // sfeLED.off();
-
-    // // Reset time !
-    // resetDevice();
-    // }
+        // Reset time !
+        resetDevice();
+    }
 }
 //---------------------------------------------------------------------------
 void flxApplication::onButtonReleased(uint32_t increment)
 {
+#if defined(CONFIG_FLUX_APP_LED)
     if (increment > 0)
-        sfeLED.off();
+        theLED.off();
+#endif
 }
 
 //---------------------------------------------------------------------------
@@ -269,20 +290,6 @@ bool flxApplication::sysSetup()
     // do we need to disable startup messages (Warn and Error still displayed)
     if (startupOutputMode() == kAppStartupMsgNone)
         flxLog.setLogLevel(flxLogWarning);
-
-    // // See if we can ID the board we're running on.
-    // _modeFlags |= dlModeCheckSystem();
-
-    // Lets set the application name. If we recognize the board, we use it's name, otherwise
-    // we use something generic
-
-    // if (dlModeCheckValid(_modeFlags))
-    //     setName(dlModeCheckName(_modeFlags));
-    // else
-    //     setName(dlModeCheckName(SFE_DL_IOT_9DOF_MODE)); // probably an original board
-
-    setName("SparkFun OpenLog IoT");
-    setDescription(kDLVersionBoardDesc);
 
     // flxLog_I("DEBUG: onSetup() enter - Free Heap: %d", ESP.getFreeHeap());
 
@@ -575,8 +582,11 @@ void flxApplication::sysInit(void)
     for (uint32_t startMS = millis(); !Serial && millis() - startMS <= kSerialStartupDelayMS;)
         delay(250);
 
-    // sfeLED.initialize();
-    // sfeLED.on(sfeLED.Green);
+#if defined(CONFIG_FLUX_APP_LED)
+    if (!theLED.initialize(FLUX_BOARD_APP_LED))
+        flxLog_W(F("LED failed to initialize"));
+    theLED.on(flxColor::Green);
+#endif
 
     setOpMode(kFlxApplicationOpStartup);
 
@@ -729,8 +739,9 @@ bool flxApplication::sysStart()
     clearOpMode(kFlxApplicationOpStartup);
     clearOpMode(kFlxApplicationOpStartAllFlags);
 
-    // sfeLED.off();
-
+#if defined(CONFIG_FLUX_APP_LED)
+    theLED.off();
+#endif
     // we are done with startup - reset output mode
     if (startupOutputMode() != kAppStartupMsgNormal)
         flxLog.setLogLevel(flxLogInfo);
@@ -838,15 +849,15 @@ bool flxApplication::loop()
         else // edit settings
         {
             // start an editing session
-            // sfeLEDColor_t color;
+            flxColor::color color;
             int status = _serialSettings.editSettings();
-            // if (status == -1)
-            //     color = sfeLED.Red;
-            // else if (status == 1)
-            //     color = sfeLED.Green;
-            // else
-            //     color = sfeLED.Yellow;
-            // sfeLED.flash(color);
+            if (status == -1)
+                color = flxColor::Red;
+            else if (status == 1)
+                color = flxColor::Green;
+            else
+                color = flxColor::Yellow;
+            theLED.flash(color);
         }
     }
     return false;

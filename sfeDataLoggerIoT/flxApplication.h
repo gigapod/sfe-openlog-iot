@@ -240,8 +240,10 @@ class flxApplication : public flxApplicationBase
     uint32_t get_termBaudRate(void);
     void set_termBaudRate(uint32_t rate);
 
+#if defined(CONFIG_FLUX_APP_LED)
     bool get_ledEnabled(void);
     void set_ledEnabled(bool);
+#endif
 
     bool get_sleepEnabled(void);
     void set_sleepEnabled(bool);
@@ -307,8 +309,12 @@ class flxApplication : public flxApplicationBase
     flxPropertyRWBool<flxApplication, &flxApplication::get_sleepEnabled, &flxApplication::set_sleepEnabled>
         sleepEnabled;
 
+#if defined(CONFIG_FLUX_APP_LED)
     // Display LED Enabled?
     flxPropertyRWBool<flxApplication, &flxApplication::get_ledEnabled, &flxApplication::set_ledEnabled> ledEnabled;
+
+    flxAppLED theLED;
+#endif
 
     // Serial Baud rate setting
     flxPropertyRWUInt32<flxApplication, &flxApplication::get_termBaudRate, &flxApplication::set_termBaudRate>
@@ -343,6 +349,9 @@ class flxApplication : public flxApplicationBase
     // Enabled/Disabled
     flxPropertyRWBool<flxApplication, &flxApplication::get_logsysinfo, &flxApplication::set_logsysinfo> logSysInfo;
 
+    void onSystemActivity(void);
+    void onSystemActivityLow(void);
+
   private:
     void enterSleepMode(void);
 
@@ -357,8 +366,6 @@ class flxApplication : public flxApplicationBase
 #if defined(CONFIG_FLUX_PREFS_SERIAL)
     void onSettingsEdit(bool bLoading);
 #endif
-    void onSystemActivity(void);
-    void onSystemActivityLow(void);
 
     void onErrorMessage(uint8_t);
 

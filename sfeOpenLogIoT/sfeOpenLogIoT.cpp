@@ -34,6 +34,7 @@ bool sfeOpenLogIoT::onSetup()
 {
     setName("SparkFun OpenLog IoT");
     setDescription("(c) 2023-2026 SparkFun Electronics");
+
     flxLog_I("user - onSetup()");
     return true;
 }

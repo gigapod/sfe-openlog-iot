@@ -16,7 +16,6 @@
 #include "flxApplication.h"
 #include "flxAppSystemInfo.h"
 #include "sfeDLCommands.h"
-#include "sfeDLVersion.h"
 
 #include "esp_sleep.h"
 
@@ -31,6 +30,30 @@
 
 RTC_DATA_ATTR int boot_count = 0;
 
+// Some version checks - if these are not set ...
+#ifndef FLUX_APP_VERSION_MAJOR
+#define FLUX_APP_VERSION_MAJOR 0
+#endif
+
+#ifndef FLUX_APP_VERSION_MINOR
+#define FLUX_APP_VERSION_MINOR 0
+#endif
+
+#ifndef FLUX_APP_VERSION_POINT
+#define FLUX_APP_VERSION_POINT 0
+#endif
+
+#ifndef FLUX_APP_VERSION_DESCRIPTOR
+#define FLUX_APP_VERSION_DESCRIPTOR "Version 0.0.0"
+#endif
+
+#ifndef BUILD_NUMBER
+#define BUILD_NUMBER 0
+#endif
+
+#ifndef FLUX_APP_CLASS_NAME_ID
+#define FLUX_APP_CLASS_NAME_ID "NIL-APP-CLASS"
+#endif
 // For finding the firmware files on SD card
 #define kDataLoggerFirmwareFilePrefix "SparkFun_DataLoggerIoT_"
 
@@ -294,7 +317,8 @@ bool flxApplication::sysSetup()
     // flxLog_I("DEBUG: onSetup() enter - Free Heap: %d", ESP.getFreeHeap());
 
     // Version info
-    setVersion(kDLVersionNumberMajor, kDLVersionNumberMinor, kDLVersionNumberPoint, kDLVersionDescriptor, BUILD_NUMBER);
+    setVersion(FLUX_APP_VERSION_MAJOR, FLUX_APP_VERSION_MINOR, FLUX_APP_VERSION_POINT, FLUX_APP_VERSION_DESCRIPTOR,
+               BUILD_NUMBER);
 
 #if defined(CONFIG_FLUX_PREFS)
     // set the settings storage system for the framework
@@ -441,7 +465,7 @@ void flxApplication::sysRestore(void)
     // At this point, we know enough about the device to set details about it.
     char prefix[5] = "0000";
     // (void)dlModeCheckPrefix(_modeFlags, prefix);
-    setAppClassID(kDLAppClassNameID, prefix); // internal name string for this app type
+    setAppClassID(FLUX_APP_CLASS_NAME_ID, prefix); // internal name string for this app type
 
     flxApplicationBase::sysRestore();
 }

@@ -15,7 +15,6 @@
 
 #include "flxAppSystemInfo.h"
 #include "flxApplication.h"
-#include "sfeDLVersion.h"
 #include <Flux/flxSerial.h>
 
 //---------------------------------------------------------------------------

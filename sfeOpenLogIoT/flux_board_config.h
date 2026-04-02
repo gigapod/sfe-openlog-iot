@@ -23,3 +23,20 @@
 
 // RGB LED
 // #define FLUX_BOARD_APP_LED_RGB
+
+// Version information
+
+// Major version number
+#define FLUX_APP_VERSION_MAJOR 1
+
+// Minor version number
+#define FLUX_APP_VERSION_MINOR 0
+
+// Point version number
+#define FLUX_APP_VERSION_POINT 0
+
+// Version string description
+#define FLUX_APP_VERSION_DESCRIPTOR "Version 1.0.0"
+
+// app name/class ID string
+#define FLUX_APP_CLASS_NAME_ID "SFE-OPENLOG-IOT"

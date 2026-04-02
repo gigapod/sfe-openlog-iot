@@ -5,8 +5,10 @@ Firmware for the OpenLog IoT - using the flux-sdk
 ## Current compile line
 
 ```sh
-arduino-cli compile --fqbn esp32:esp32:esp32 --board-options FlashSize=8M --board-options PartitionScheme=default_8MB ./sfeOpenLogIoT/sfeOpenLogIoT.ino --export-binaries --library `pwd`/SparkFun_OpenScaleIoT
+arduino-cli compile --fqbn esp32:esp32:esp32 --board-options FlashSize=8M --board-options PartitionScheme=default_8MB ./sfeOpenLogIoT/sfeOpenLogIoT.ino --export-binaries --library `pwd`/SparkFun_OpenScaleIoT --build-property "compiler.cpp.extra_flags=-I./sfeOpenLogIot"
 ```
+
+Note - need to work to remove the added include directory build property ...
 
 ## upload/flash command
 
